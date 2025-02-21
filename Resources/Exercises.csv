@@ -1,0 +1,666 @@
+exercise_id,name,description,level,instructions,equipment_needed,overloading,power_strength_supplement,isolation_compound_accessory,push_pull_legs_core,vertical_horizontal_rotational,stretch,video_url
+1,Assisted Dips,Dips using an assisted dip machine to reduce resistance.,Beginner,"1. Get into the starting position for Assisted Dips.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,strength,accessory,push,vertical,0,
+2,Push-ups,Bodyweight exercise performed by raising and lowering the body using the arms.,Beginner,"1. Get into the starting position for Push-ups.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,strength,accessory,push,horizontal,0,
+3,Bulgarian Split Squats,"Single-leg squat variation with rear foot elevated, challenging balance and strength.",Intermediate,"1. Get into the starting position for Bulgarian Split Squats.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,strength,compound,legs,,0,
+4,Machine Standing Calf Raise,Calf raise exercise performed using a dedicated calf raise machine.,Beginner,"1. Get into the starting position for Machine Standing Calf Raise.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,isolation,legs,,0,
+5,Bench Press,"Compound exercise using a barbell to target the chest, shoulders, and triceps.",Intermediate,"1. Get into the starting position for Bench Press.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,push,horizontal,0,
+6,Incline Bench Press,"Bench press variation performed on an incline bench, emphasizing the upper chest.",Beginner,"1. Get into the starting position for Incline Bench Press.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,strength,compound,push,horizontal,0,
+7,Bent Over Cable Crossover,Isolation exercise using cables to target the chest muscles.,Beginner,"1. Get into the starting position for Bent Over Cable Crossover.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,strength,accessory,push,horizontal,0,
+8,Cable Side Lateral Raise,Isolation exercise using cables to target the shoulder muscles.,Beginner,"1. Get into the starting position for Cable Side Lateral Raise.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,isolation,pull,,0,
+9,Shoulder Press,Compound exercise using a barbell to target the shoulders and triceps.,Beginner,"1. Get into the starting position for Shoulder Press.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,push,vertical,0,
+10,Cable Reverse Fly,Isolation exercise using cables to target the rear deltoids.,Intermediate,"1. Get into the starting position for Cable Reverse Fly.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,accessory,pull,horizontal,0,
+11,Shrug with Trap Bar,Shrug variation using a trap bar to target the trapezius muscles.,Beginner,"1. Get into the starting position for Shrug with Trap Bar.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,strength,isolation,pull,vertical,0,
+12,Triceps Extension,Isolation exercise using a resistance band to target the triceps.,Intermediate,"1. Get into the starting position for Triceps Extension.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,isolation,push,vertical,0,
+13,Overhead Cable Triceps Extension,Isolation exercise using cables to target the triceps.,Beginner,"1. Get into the starting position for Overhead Cable Triceps Extension.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,isolation,push,vertical,0,
+14,Front Barbell Squat,"Squat variation with barbell held in front of the body, emphasizing quadriceps.",Advanced,"1. Get into the starting position for Front Barbell Squat.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,legs,,0,
+15,Hack Squat,"Squat variation using a hack squat machine, emphasizing quadriceps.",Beginner,"1. Get into the starting position for Hack Squat.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,legs,,0,
+16,Leg Extensions,Isolation exercise using a leg extension machine to target the quadriceps.,Beginner,"1. Get into the starting position for Leg Extensions.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,isolation,legs,,0,
+17,Glute Ham Raise,"Exercise targeting the glutes, hamstrings, and lower back, often using a dedicated machine.",Advanced,"1. Get into the starting position for Glute Ham Raise.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,accessory,legs,,0,
+18,Seated Leg Curl,Isolation exercise using a leg curl machine to target the hamstrings.,Beginner,"1. Get into the starting position for Seated Leg Curl.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,isolation,legs,,0,
+19,Incline Y Raise,Exercise performed on an incline bench to target the upper back and shoulders.,Beginner,"1. Get into the starting position for Incline Y Raise.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,accessory,pull,vertical,0,
+20,T-Bar Row,Compound exercise using a T-bar machine to target the back muscles.,Beginner,"1. Get into the starting position for T-Bar Row.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,pull,horizontal,0,
+21,Kneeling Twisted Single Arm Cable Lat Pulldown,"Lat pulldown variation performed kneeling with a twist, emphasizing latissimus dorsi.",Intermediate,"1. Get into the starting position for Kneeling Twisted Single Arm Cable Lat Pulldown.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,strength,compound,pull,,0,
+22,Cable Pulldown,Compound exercise using a cable machine to target the back muscles.,Beginner,"1. Get into the starting position for Cable Pulldown.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,strength,accessory,pull,,0,
+23,Seated Incline Bicep Curls,Isolation exercise performed on an incline bench to target the biceps.,Beginner,"1. Get into the starting position for Seated Incline Bicep Curls.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,isolation,pull,,0,
+24,Concentration Curl,Isolation exercise focusing on one arm at a time to target the biceps.,Beginner,"1. Get into the starting position for Concentration Curl.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,isolation,pull,,0,
+25,Reverse Curl,Biceps curl variation using an overhand grip to emphasize the forearms.,Beginner,"1. Get into the starting position for Reverse Curl.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,isolation,pull,,0,
+26,Preacher Curls,Isolation exercise using a preacher curl bench to target the biceps.,Intermediate,"1. Get into the starting position for Preacher Curls.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,isolation,pull,,0,
+27,Back Squat,Compound exercise that targets the legs and glutes.,Beginner,"1. Get into the starting position for Back Squat.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,strength,compound,legs,,0,
+28,Romanian Deadlift,Compound exercise targeting the hamstrings and glutes.,Intermediate,"1. Get into the starting position for Romanian Deadlift.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,strength,compound,legs,,0,
+29,Barbell Hip Thrust,Compound exercise targeting the glutes and hamstrings.,Intermediate,"1. Get into the starting position for Barbell Hip Thrust.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,strength,compound,legs,,0,
+30,Glute Kickback Machine,Isolation exercise using a machine to target the glutes.,Beginner,"1. Get into the starting position for Glute Kickback Machine.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,strength,accessory,legs,,0,
+31,Single Arm Bicep Curl with Cable,Isolation exercise using a cable machine to target the biceps.,Beginner,"1. Get into the starting position for Single Arm Bicep Curl with Cable.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,isolation,pull,,0,
+32,Ab Machine Crunches,Abdominal exercise performed on a dedicated ab machine.,Beginner,"1. Get into the starting position for Ab Machine Crunches.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,isolation,core,,0,
+33,Decline Crunch,Crunch variation performed on a decline bench to increase the difficulty.,Intermediate,"1. Get into the starting position for Decline Crunch.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,supplement,isolation,core,,0,
+34,Leg Raise,Abdominal exercise performed by raising the legs.,Beginner,"1. Get into the starting position for Leg Raise.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,supplement,isolation,core,,0,
+35,Front Squat - Snatch Grip,"A variation of the front squat where the barbell is held in a wider grip, used in weightlifting.",intermediate,"1. Get into the starting position for Front Squat - Snatch Grip.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,legs,,0,
+36,Front Squat - Cross Grip,A front squat variation where the arms are crossed to hold the barbell.,Intermediate,"1. Get into the starting position for Front Squat - Cross Grip.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,legs,,0,
+37,Goblet Squat,a front loaded squat variation great for beginners,Beginner,"1. Get into the starting position for Goblet Squat.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,legs,,0,
+38,SL Squat (Pistol),A tough single leg exercise that is a true test of strangth and stability,Advanced,"1. Get into the starting position for SL Squat (Pistol).
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,strength,compound,legs,,0,
+39,Safety Bar Squat,An alternatve to front sqiat by using a safety bar,Beginner,"1. Get into the starting position for Safety Bar Squat.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,legs,,0,
+40,Box Squat - Safety Bar,An alternatve to front sqiat by using a safety bar and a box,Intermediate,"1. Get into the starting position for Box Squat - Safety Bar.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,legs,,0,
+41,TRX Squat,A bodyweight squat variation using accomdating support,Beginner,"1. Get into the starting position for TRX Squat.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,strength,compound,legs,,0,
+42,Wall Sit,An isometric leg exercise great for building stability in the legs,Beginner,"1. Get into the starting position for Wall Sit.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,supplement,accessory,legs,,0,
+43,Box Squat - Goblet,a front loaded squat variation great for beginners with a box for support,Beginner,"1. Get into the starting position for Box Squat - Goblet.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,legs,,0,
+44,Box Squat - Back,Barbell squat with a box for added support,Intermediate,"1. Get into the starting position for Box Squat - Back.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,legs,,0,
+45,Squat Press - Dumbbell,A compound movement combining a squat with an overhead press using dumbbells.,Intermediate,"1. Get into the starting position for Squat Press - Dumbbell.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,power,compound,legs,vertical,0,
+46,Squat Row,A hybrid exercise pairing a squat with a bent-over row to target lower and upper body simultaneously.,Intermediate,"1. Get into the starting position for Squat Row.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,power,accessory,legs,horizontal,0,
+47,Pin Squat,"Squatting from a paused position in the squat rack, with the bar resting on the pins.",Advanced,"1. Get into the starting position for Pin Squat.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,power,compound,legs,,0,
+48,Sumo Squats,A squat variation where the feet are positioned wider and the toes pointed outward.,Beginner,"1. Get into the starting position for Sumo Squats.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,legs,,0,
+49,Squat Press - Viking,A dynamic exercise using a Viking press attachment to perform a squat followed by an overhead press,Intermediate,"1. Get into the starting position for Squat Press - Viking.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,power,compound,legs,vertical,0,
+50,Bodyweight Squat,A fundamental lower-body exercise using only body weight to perform a squat.,Beginner,"1. Get into the starting position for Bodyweight Squat.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,strength,compound,legs,,0,
+51,Zercher Squat,A front-loaded squat variation where the barbell is held in the crook of the elbows.,Advanced,"1. Get into the starting position for Zercher Squat.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,legs,,0,
+52,Squat Press - Landmine,squat combined with an overhead press using a landmine setup for added stability.,Intermediate,"1. Get into the starting position for Squat Press - Landmine.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,power,compound,legs,vertical,0,
+53,Static Lunges,A stationary lunge variation focusing on balance and leg strength.,Beginner,"1. Get into the starting position for Static Lunges.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,strength,compound,legs,,0,
+54,Reverse Lunge,A lunge variation where you step backward to target glutes and hamstrings.,Intermediate,"1. Get into the starting position for Reverse Lunge.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,strength,compound,legs,,0,
+55,Lateral Lunge,A side-to-side lunge movement to strengthen the inner and outer thighs.,Intermediate,"1. Get into the starting position for Lateral Lunge.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,strength,compound,legs,,0,
+56,Walking Lunges,A dynamic lunge variation performed while walking forward to engage the entire lower body.,Intermediate,"1. Get into the starting position for Walking Lunges.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,strength,compound,legs,,0,
+57,Multi-Directional Lunges,Lunges performed in various directions to improve mobility and strength.,Advanced,"1. Get into the starting position for Multi-Directional Lunges.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,strength,compound,legs,,0,
+58,Step Ups,lower-body exercise stepping onto an elevated platform to target quads and glutes.,Beginner,"1. Get into the starting position for Step Ups.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,strength,accessory,legs,,0,
+59,Step Downs,controlled movement stepping down from an elevated platform to build stability and strength.,Intermediate,"1. Get into the starting position for Step Downs.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,supplement,accessory,legs,,0,
+60,Deceleration Lunges,lunge variation emphasizing controlled lowering to improve eccentric strength and stability.,Advanced,"1. Get into the starting position for Deceleration Lunges.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,strength,accessory,legs,,0,
+61,Skater Lunge,lateral lunge variation mimicking a skater's movement to target the outer thighs and glutes.,Advanced,"1. Get into the starting position for Skater Lunge.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,accessory,legs,,0,
+62,Slider Lunges,lunge variation using sliders to add instability and engage core muscles.,Intermediate,"1. Get into the starting position for Slider Lunges.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,accessory,legs,,0,
+63,Forward to Back Lunge,dynamic lunge alternating between forward and backward movements for full lower-body engagement.,Intermediate,"1. Get into the starting position for Forward to Back Lunge.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,strength,accessory,legs,,0,
+64,Isometric Lunge Holds,"static hold in the lunge position to build strength, balance, and endurance.",Beginner,"1. Get into the starting position for Isometric Lunge Holds.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,supplement,accessory,legs,,0,
+65,Step Up + Chop,step-up combined with a rotational chop motion to engage the core and lower body.,Advanced,"1. Get into the starting position for Step Up + Chop.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,power,accessory,legs,rotational,0,
+66,Drop Lunges,plyometric lunge variation dropping into a lunge position to build power and explosiveness.,Advanced,"1. Get into the starting position for Drop Lunges.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,power,accessory,legs,,0,
+67,Deadlift,fundamental hinge movement lifting a barbell from the ground to target the posterior chain,Intermediate,"1. Get into the starting position for Deadlift.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,legs,,0,
+68,Sumo Deadlift,deadlift variation with a wide stance to emphasize inner thighs and glutes.,Intermediate,"1. Get into the starting position for Sumo Deadlift.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,legs,,0,
+69,Hex Bar Deadlift,deadlift performed using a hex bar for a more upright torso position and reduced lower back strain.,Intermediate,"1. Get into the starting position for Hex Bar Deadlift.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,legs,,0,
+70,Romanian Deadlift (RDL),"Hinging at the hips with a slight bend in the knees, lowering a weight towards the ground.",Intermediate,"1. Get into the starting position for Romanian Deadlift (RDL).
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,legs,,0,
+71,Single Leg RDL,"RDL performed on one leg, challenging balance and stability.",Advanced,"1. Get into the starting position for Single Leg RDL.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,strength,compound,legs,,0,
+72,SL RDL to Row,Combining a single leg RDL with a dumbbell or cable row.,Advanced,"1. Get into the starting position for SL RDL to Row.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,accessory,legs,,0,
+73,Hinge Row,A rhythmic bent-over row with a focus on the hip hinge movement.,Intermediate,"1. Get into the starting position for Hinge Row.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,accessory,legs,,0,
+74,Kettlebell Swings,Swinging a kettlebell from between the legs to shoulder height.,Intermediate,"1. Get into the starting position for Kettlebell Swings.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,power,compound,legs,,0,
+75,Glute Bridge,"Lying on your back, raising your hips off the floor",Beginner,"1. Get into the starting position for Glute Bridge.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,strength,accessory,legs,,0,
+76,Elevated Glute Bridge,Glute bridge with feet elevated on a bench or platform.,Intermediate,"1. Get into the starting position for Elevated Glute Bridge.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,supplement,accessory,legs,,0,
+77,Isometric Bridge Holds,Holding the top position of a glute bridge.,Intermediate,"1. Get into the starting position for Isometric Bridge Holds.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,supplement,accessory,legs,,0,
+78,Swiss Ball Hamstring Curls,"Lying on your back with feet on a Swiss ball, curling the ball towards your glutes.",Intermediate,"1. Get into the starting position for Swiss Ball Hamstring Curls.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,isolation,legs,,0,
+79,Banded Good Morning,Hinging at the hips with a resistance band around your upper back,Intermediate,"1. Get into the starting position for Banded Good Morning.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,accessory,legs,,0,
+80,KB Deadlift,A deadlift performed with a kettlebell.,Intermediate,"1. Get into the starting position for KB Deadlift.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,legs,,0,
+81,Shortstop Deadlift,A deadlift variation with a wider stance and focus on picking the weight up between the legs,Intermediate,"1. Get into the starting position for Shortstop Deadlift.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,legs,,0,
+82,Med Ball Chest Press,Chest press using a medicine ball.,Intermediate,"1. Get into the starting position for Med Ball Chest Press.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,power,compound,push,horizontal,0,
+83,DB Snatch,Lifting a dumbbell overhead in one explosive movement.,Advanced,"1. Get into the starting position for DB Snatch.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,power,compound,legs,vertical,0,
+84,Swiss Ball Chest Press,Chest press performed with your upper back on a Swiss ball.,Intermediate,"1. Get into the starting position for Swiss Ball Chest Press.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,accessory,push,horizontal,0,
+85,Barbell Overhead Press,Pressing a barbell overhead from a standing position.,Intermediate,"1. Get into the starting position for Barbell Overhead Press.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,push,vertical,0,
+86,Military Press,"Overhead press with a strict, upright posture.",Intermediate,"1. Get into the starting position for Military Press.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,push,vertical,0,
+87,DB Shoulder Press,Shoulder press using dumbbells,Beginner,"1. Get into the starting position for DB Shoulder Press.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,push,vertical,0,
+88,Landmine Press,Pressing a barbell loaded on a landmine attachment.,Beginner,"1. Get into the starting position for Landmine Press.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,push,vertical,0,
+89,Landmine Push Press,Landmine press with a slight leg drive to assist the press,Intermediate,"1. Get into the starting position for Landmine Push Press.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,power,compound,push,vertical,0,
+90,Landmine Pull,Pulling a landmine barbell towards your chest.,Beginner,"1. Get into the starting position for Landmine Pull.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,pull,horizontal,0,
+91,Single Arm DB Press,Shoulder press with one dumbbell at a time,Intermediate,"1. Get into the starting position for Single Arm DB Press.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,push,horizontal,0,
+92,1/2 Kneeling Shoulder Press,Shoulder press performed while on 1 knee,Intermediate,"1. Get into the starting position for 1/2 Kneeling Shoulder Press.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,push,vertical,0,
+93,Dips,"Bodyweight exercise where you lower and raise yourself between parallel bars. Primarily works the triceps, chest, and shoulders.",Intermediate,"1. Get into the starting position for Dips.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,strength,accessory,push,vertical,0,
+94,Prone Jackknife,Core exercise performed on a stability ball or floor where you pull your knees toward your chest while in a plank position.,intermediate,"1. Get into the starting position for Prone Jackknife.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,accessory,push,horizontal,0,
+95,Skull Crushers,"Triceps-focused exercise performed with a barbell or dumbbells, lowering the weight toward the forehead and extending back up.",intermediate,"1. Get into the starting position for Skull Crushers.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,isolation,push,horizontal,0,
+96,Lateral Raise,"Shoulder exercise using dumbbells, raising arms to the side to shoulder height.",Beginner,"1. Get into the starting position for Lateral Raise.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,isolation,push,,0,
+97,Front Raise,Shoulder exercise lifting dumbbells in front of your body to shoulder height.,Beginner,"1. Get into the starting position for Front Raise.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,isolation,push,,0,
+98,Plyo Push Ups,Explosive push-up variation where hands leave the ground during the upward phase. Focuses on power,advanced,"1. Get into the starting position for Plyo Push Ups.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,power,compound,push,horizontal,0,
+99,Pull Ups,"Upper body exercise pulling your body up on a bar. Targets lats, biceps, and back muscles",intermediate,"1. Get into the starting position for Pull Ups.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,strength,compound,pull,vertical,0,
+100,Chin Ups,"Similar to pull-ups, but palms face toward you. Emphasizes biceps more.",intermediate,"1. Get into the starting position for Chin Ups.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,strength,compound,pull,vertical,0,
+101,Bent Over Row,"Back and bicep exercise using a barbell or dumbbells, pulling weight toward your torso while bending forward.",Beginner,"1. Get into the starting position for Bent Over Row.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,pull,horizontal,0,
+102,1 Arm DB Row,"Single-arm variation of the row, targeting lats and biceps. Performed using a bench.",Beginner,"1. Get into the starting position for 1 Arm DB Row.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,pull,horizontal,0,
+103,BirdDog Row,A stability-focused row combining balance (kneeling on one knee) and back muscle engagement.,intermediate,"1. Get into the starting position for BirdDog Row.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,compound,pull,horizontal,0,
+104,Lat Pulldown,Machine exercise targeting the lat muscles by pulling a bar down to your chest.,Beginner,"1. Get into the starting position for Lat Pulldown.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,accessory,pull,horizontal,0,
+105,1 Arm Lat Pull,"Single-arm cable or band variation of the lat pulldown, isolating each side of the back.",intermediate,"1. Get into the starting position for 1 Arm Lat Pull.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,accessory,pull,vertical,0,
+106,Split Stance Cable/Band Row,Single-arm row using a band or cable while in a split stance for stability.,intermediate,"1. Get into the starting position for Split Stance Cable/Band Row.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,accessory,pull,horizontal,0,
+107,TRX Row,"Suspension trainer exercise where you row your body toward the straps. Works back, arms, and core.",Beginner,"1. Get into the starting position for TRX Row.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,strength,accessory,pull,horizontal,0,
+108,TRX External Rotation,"Shoulder and rotator cuff exercise performed with a suspension trainer, focusing on stability.",intermediate,"1. Get into the starting position for TRX External Rotation.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,accessory,pull,,0,
+109,Low Row,"Back exercise performed on a rowing machine or with cables, focusing on the lats and biceps.",Beginner,"1. Get into the starting position for Low Row.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,accessory,pull,horizontal,0,
+110,Deceleration Lunge Cable/Band Row,"Combination of a lunge and row, focusing on back and leg muscles with deceleration control.",intermediate,"1. Get into the starting position for Deceleration Lunge Cable/Band Row.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,accessory,pull,horizontal,0,
+111,Inverted Row,Bodyweight row where you pull yourself toward a bar while lying under it.,Beginner,"1. Get into the starting position for Inverted Row.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,strength,accessory,pull,horizontal,0,
+112,1/2 Kneeling Lat Pull,A lat pull variation performed while kneeling on 1 knee,intermediate,"1. Get into the starting position for 1/2 Kneeling Lat Pull.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,accessory,pull,vertical,0,
+113,Banded Row,Resistance band version of the row targeting the back and biceps.,Beginner,"1. Get into the starting position for Banded Row.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,accessory,pull,horizontal,0,
+114,Band Tears,Resistance band exercise where you pull the band apart to strengthen the rear deltoids and upper back.,Beginner,"1. Get into the starting position for Band Tears.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,accessory,pull,,0,
+115,Bicep Curls,"Classic arm exercise performed with dumbbells, barbells, or bands, targeting the biceps.",Beginner,"1. Get into the starting position for Bicep Curls.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,isolation,pull,,0,
+116,Banded Tricep Extensions,Tricep exercise using a resistance band to extend the arms overhead or behind the body.,Beginner,"1. Get into the starting position for Banded Tricep Extensions.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,isolation,push,,0,
+117,TRX Face Pull,Suspension trainer exercise pulling toward the face to target rear delts and upper back.,intermediate,"1. Get into the starting position for TRX Face Pull.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,accessory,pull,horizontal,0,
+118,TRX Bicep Curl,Suspension trainer variation of a bicep curl using body weight as resistance.,intermediate,"1. Get into the starting position for TRX Bicep Curl.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,isolation,pull,,0,
+119,Chest Supported Incline Row,"Row performed on an incline bench, reducing strain on the lower back while targeting the upper back.",Beginner,"1. Get into the starting position for Chest Supported Incline Row.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,strength,accessory,pull,horizontal,0,
+120,Farmers Carry,A grip and core strength exercise where heavy weights are carried over a distance.,Beginner,"1. Get into the starting position for Farmers Carry.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,accessory,core,,,
+121,Overhead Carry,A stability-focused exercise carrying weights overhead to engage the shoulders and core.,intermediate,"1. Get into the starting position for Overhead Carry.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,accessory,core,,,
+122,Suitcase Carry,unilateral carry holding a weight on one side to challenge core stability and grip strength.,intermediate,"1. Get into the starting position for Suitcase Carry.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,accessory,core,,,
+123,Offset Carry,unilateral carry holding a weight on one side to challenge core stability and grip strength.,intermediate,"1. Get into the starting position for Offset Carry.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,accessory,core,,,
+124,Offset Hex Bar Hold,static hold with uneven loads on a hex bar to build grip and core endurance.,advanced,"1. Get into the starting position for Offset Hex Bar Hold.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,accessory,core,,,
+125,Carry Marches,dynamic carry variation incorporating high knee marches for added core and hip engagement.,Beginner,"1. Get into the starting position for Carry Marches.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,accessory,core,,,
+126,Seated Arm Swings,seated exercise swinging arms to improve shoulder mobility and endurance.,intermediate,"1. Get into the starting position for Seated Arm Swings.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,power,accessory,core,,,
+127,Sprinter Starts,explosive movement mimicking the start of a sprint to build power and acceleration.,intermediate,"1. Get into the starting position for Sprinter Starts.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,power,accessory,legs,,,
+128,MB Slams,A full-body explosive exercise slamming a medicine ball into the ground.,Beginner,"1. Get into the starting position for MB Slams.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,power,accessory,core,,,
+129,Rainbow Slams,A dynamic slam variation moving the medicine ball in an arc to engage rotational power.,intermediate,"1. Get into the starting position for Rainbow Slams.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,power,accessory,core,rotational,,
+130,Quick MB Slams,"Rapid, explosive medicine ball slams to build power and endurance.",intermediate,"1. Get into the starting position for Quick MB Slams.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,power,accessory,core,,,
+131,Transverse Lunge Slams,combination of a lateral lunge and medicine ball slam for rotational strength.,intermediate,"1. Get into the starting position for Transverse Lunge Slams.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,power,accessory,core,rotational,,
+132,Rotational MB Toss,rotational power exercise tossing a medicine ball to the side.,Beginner,"1. Get into the starting position for Rotational MB Toss.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,power,accessory,core,rotational,,
+133,MB Keg Toss,explosive overhead toss of a medicine ball or keg to build power.,Beginner,"1. Get into the starting position for MB Keg Toss.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,power,accessory,legs,,,
+134,Kneeling Rainbow Slams,kneeling variation of rainbow slams to isolate upper body and core power.,Beginner,"1. Get into the starting position for Kneeling Rainbow Slams.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,power,accessory,core,rotational,,
+135,MB Chest Pass,explosive chest pass with a medicine ball to build upper body power.,Beginner,"1. Get into the starting position for MB Chest Pass.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,power,accessory,push,horizontal,,
+136,Wall Ball,full-body exercise throwing a medicine ball against a wall from a squat position.,Beginner,"1. Get into the starting position for Wall Ball.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,power,accessory,legs,vertical,,
+137,Squat Jumps,plyometric jump from a squat position to build explosive lower-body power.,Beginner,"1. Get into the starting position for Squat Jumps.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,power,accessory,legs,,,
+138,Box Jumps,explosive jump onto a box to develop lower-body strength and power.,Beginner,"1. Get into the starting position for Box Jumps.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,power,accessory,legs,,,
+139,SL Box Jump,"single-leg box jump to improve balance, stability, and unilateral power.",intermediate,"1. Get into the starting position for SL Box Jump.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,power,accessory,legs,,,
+140,Depth Jump,Depth Jump is an effective exercise for targeting the relevant muscle groups.,advanced,"1. Get into the starting position for Depth Jump.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,power,accessory,legs,,,
+141,Drop Jump,Drop Jump is an effective exercise for targeting the relevant muscle groups.,advanced,"1. Get into the starting position for Drop Jump.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,power,accessory,legs,,,
+142,Band Assisted Jumps,Band Assisted Jumps is an effective exercise for targeting the relevant muscle groups.,advanced,"1. Get into the starting position for Band Assisted Jumps.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,power,accessory,legs,,,
+143,Hex Bar Jumps,Hex Bar Jumps is an effective exercise for targeting the relevant muscle groups.,advanced,"1. Get into the starting position for Hex Bar Jumps.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,power,accessory,legs,,,
+144,Broad Jumps,Broad Jumps is an effective exercise for targeting the relevant muscle groups.,intermediate,"1. Get into the starting position for Broad Jumps.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,power,accessory,legs,,,
+145,Tuck Jumps,Tuck Jumps is an effective exercise for targeting the relevant muscle groups.,Beginner,"1. Get into the starting position for Tuck Jumps.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,power,accessory,legs,,,
+146,Split Jumps,Split Jumps is an effective exercise for targeting the relevant muscle groups.,Beginner,"1. Get into the starting position for Split Jumps.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,power,accessory,legs,,,
+147,Leg Lowers,Leg Lowers is an effective exercise for targeting the relevant muscle groups.,Beginner,"1. Get into the starting position for Leg Lowers.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,supplement,accessory,core,,,
+148,Swiss Ball Crunches,Swiss Ball Crunches is an effective exercise for targeting the relevant muscle groups.,Beginner,"1. Get into the starting position for Swiss Ball Crunches.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,isolation,core,,,
+149,Swiss Ball Rollouts,Swiss Ball Rollouts is an effective exercise for targeting the relevant muscle groups.,intermediate,"1. Get into the starting position for Swiss Ball Rollouts.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,isolation,core,,,
+150,Plank,Plank is an effective exercise for targeting the relevant muscle groups.,Beginner,"1. Get into the starting position for Plank.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,supplement,isolation,core,,,
+151,Plank on Swiss,Plank on Swiss is an effective exercise for targeting the relevant muscle groups.,intermediate,"1. Get into the starting position for Plank on Swiss.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,isolation,core,,,
+152,Spiderman Plank,Spiderman Plank is an effective exercise for targeting the relevant muscle groups.,intermediate,"1. Get into the starting position for Spiderman Plank.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,supplement,isolation,core,,,
+153,Anti Rotation Hold,Anti Rotation Hold is an effective exercise for targeting the relevant muscle groups.,Beginner,"1. Get into the starting position for Anti Rotation Hold.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,isolation,core,,,
+154,Pallof Press,Pallof Press is an effective exercise for targeting the relevant muscle groups.,intermediate,"1. Get into the starting position for Pallof Press.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,accessory,core,horizontal,,
+155,Pallof Walk,Pallof Walk is an effective exercise for targeting the relevant muscle groups.,intermediate,"1. Get into the starting position for Pallof Walk.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,accessory,core,,,
+156,Woodchop,Woodchop is an effective exercise for targeting the relevant muscle groups.,intermediate,"1. Get into the starting position for Woodchop.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,accessory,core,,,
+157,Cable Twist,Cable Twist is an effective exercise for targeting the relevant muscle groups.,intermediate,"1. Get into the starting position for Cable Twist.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,accessory,core,,,
+158,Dead Bug w/ Band Hold,Dead Bug w/ Band Hold is an effective exercise for targeting the relevant muscle groups.,Beginner,"1. Get into the starting position for Dead Bug w/ Band Hold.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,isolation,core,,,
+159,Hollow Hold w/ band,Hollow Hold w/ band is an effective exercise for targeting the relevant muscle groups.,Beginner,"1. Get into the starting position for Hollow Hold w/ band.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,1,supplement,isolation,core,,,
+160,Side Plank,Side Plank is an effective exercise for targeting the relevant muscle groups.,Beginner,"1. Get into the starting position for Side Plank.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,supplement,isolation,core,,,
+161,Bicycles,Bicycles is an effective exercise for targeting the relevant muscle groups.,Beginner,"1. Get into the starting position for Bicycles.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",0,0,supplement,isolation,core,,,
+162,Stepmil,Stepmil is an effective exercise for targeting the relevant muscle groups.,Intermediate,"1. Get into the starting position for Stepmil.
+2. Perform the movement with controlled form.
+3. Complete the desired number of repetitions.
+4. Return to the starting position safely.",1,0,supplement,isolation,core,,,
+163,Standing Hamstring Stretch,A stretch to loosen up your hamstrings and lower back.,Beginner,1. Stand with feet together. 2. Hinge at your hips and reach for your toes. 3. Hold for 20-30 seconds.,0,0,,,,,1,
+164,Seated Forward Bend,A deep stretch for the hamstrings and lower back.,Intermediate,1. Sit with legs extended straight. 2. Reach forward toward your toes. 3. Hold for 20-30 seconds.,0,0,,,,,1,
+165,Cat-Cow Stretch,A yoga movement that increases flexibility in the spine.,Beginner,"1. Start on hands and knees. 2. Inhale, arch your back (Cow). 3. Exhale, round your spine (Cat). 4. Repeat for 30 seconds.",0,0,,,,,1,
+166,Child’s Pose,A resting yoga pose that stretches the back and hips.,Beginner,1. Sit back on your heels. 2. Extend arms forward and lower your chest. 3. Hold for 30 seconds.,0,0,,,,,1,
+167,Butterfly Stretch,A stretch to improve flexibility in the groin and inner thighs.,Beginner,1. Sit with soles of feet together. 2. Hold feet and gently press knees downward. 3. Hold for 20-30 seconds.,0,0,,,,,1,
+168,Quad Stretch,A standing stretch that targets the quadriceps.,Beginner,1. Stand tall. 2. Grab your ankle and pull it toward your glutes. 3. Hold for 20-30 seconds per leg.,0,0,,,,,1,
+169,Triceps Stretch,A stretch for the triceps and shoulders.,Beginner,1. Reach one arm overhead. 2. Bend the elbow and touch your back. 3. Use the other hand to press gently. 4. Hold for 20-30 seconds per side.,0,0,,,,,1,
+170,Torso Twist Stretch,A stretch for the lower back and obliques.,Intermediate,"1. Sit cross-legged. 2. Twist your torso to one side, placing one hand on the opposite knee. 3. Hold for 20-30 seconds per side.",0,0,,,,,1,
+171,Standing Side Stretch,A full-body stretch that targets the obliques and shoulders.,Beginner,1. Stand with feet hip-width apart. 2. Reach one arm overhead and lean to the side. 3. Hold for 20-30 seconds per side.,0,0,,,,,1,
+172,Downward Dog,"A yoga pose that stretches the hamstrings, calves, and shoulders.",Intermediate,1. Start in a high plank. 2. Lift hips toward the ceiling. 3. Keep heels pushing down and arms extended. 4. Hold for 30 seconds.,0,0,,,,,1,
+173,Hip Flexor Stretch,A stretch to release tight hip flexors.,Intermediate,1. Kneel on one knee with the other foot forward. 2. Shift weight forward to stretch the hip. 3. Hold for 20-30 seconds per side.,0,0,,,,,1,
+174,Neck Stretch,A gentle stretch for the neck and shoulders.,Beginner,"1. Sit or stand tall. 2. Tilt your head to one side, bringing your ear toward your shoulder. 3. Hold for 20-30 seconds per side.",0,0,,,,,1,
+175,Chest Opener Stretch,A stretch to open up the chest and shoulders.,Beginner,1. Clasp hands behind your back. 2. Lift your arms slightly while opening your chest. 3. Hold for 20-30 seconds.,0,0,,,,,1,
+176,Figure-Four Stretch,A deep glute and hip stretch.,Intermediate,1. Lie on your back and cross one ankle over the opposite knee. 2. Pull the supporting leg toward your chest. 3. Hold for 20-30 seconds per side.,0,0,,,,,1,
+177,Seated Spinal Twist,A stretch to improve spinal mobility.,Advanced,1. Sit with one leg straight and the other crossed over. 2. Twist your torso toward the bent knee. 3. Hold for 20-30 seconds per side.,0,0,,,,,1,
+178,Hip Abduction Machine,Strengthens the muscles on the outside of your hips,Beginner,,1,0,,,,,,
+179,Hip Abbduction Machine,Strengthens the muscles used to move your legs away from your body,Beginner,,1,0,,,,,,
