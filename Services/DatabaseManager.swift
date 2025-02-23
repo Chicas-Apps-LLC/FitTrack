@@ -529,6 +529,205 @@ class DatabaseManager {
         return true
     }
 
+    func chooseAndCreateRoutines(user: UserDto) {
+        let days = user.goals.goalGymDays
+        var routines = [RoutineDto]()
+        if let days = days {
+            for _ in 0..<days {
+                if user.currentStats.gymMembership == false {
+                    routines.append(createBodyWeightRoutines(user: user))
+                }
+                if user.goals.goalExercise?.lowercased() == "cardio" {
+                    routines = createCardioRoutines(user: user)
+                    break;
+                }
+                else if user.goals.goalExercise?.lowercased() == "strength" {
+                    routines = createStrengthRoutines(user: user)
+                    break;
+                }
+                else if user.goals.goalExercise?.lowercased() == "weight loss" {
+                    createWeightLossRoutines(user: user)
+                }
+        }
+    }
+    
+    func createCardioRoutines(user: UserDto) -> [RoutineDto]{
+        var routines = [RoutineDto]()
+        routines.append(createMainLiftOne(user: user))
+        routines.append(createMainLiftTwo(user: user))
+        routines.append(createMainLiftThree(user: user))
+        return routines
+    }
+    
+    func createBodyWeightRoutines(user: UserDto) -> RoutineDto{
+        let exercises = getExercisesByType("0")
+        
+        guard !exercises.isEmpty else {
+            log(.warning, "No bodyweight exercises found.")
+            return RoutineDto(id: 0, name: "Bodyweight Routine", description: "No exercises found", exerciseWithSetsDto: [])
+        }
+        let selectedExercises = exercises.count > 5 ? Array(exercises.shuffled().prefix(5)) : exercises
+        
+        var exercisesWithSets: [ExerciseWithSetsDto] = []
+        for exercise in selectedExercises {
+            let setsReps = createSetsRepsAndWeight(user: user) ?? []
+            let exerciseWithSets = ExerciseWithSetsDto(exercise: exercise, sets: setsReps)
+            exercisesWithSets.append(exerciseWithSets)
+        }
+        return RoutineDto(
+            id: Int.random(in: 1000...9999),  // Generate a random ID
+            name: "Bodyweight Routine",
+            description: "A bodyweight-only workout routine.",
+            exerciseWithSetsDto: exercisesWithSets
+        )
+    }
+    
+    func createStrengthRoutines(user: UserDto) -> [RoutineDto] {
+        // **CST Routine (Chest, Shoulders, Triceps)**
+        let chestExercises = getExercisesByMuscle("1")
+        let frontDeltExercises = getExercisesByMuscle("18") // Anterior Head
+        let lateralDeltExercises = getExercisesByMuscle("19") // Lateral Head
+        let rearDeltExercises = getExercisesByMuscle("20") // Posterior Head
+        let tricepLateralExercises = getExercisesByMuscle("21")
+        let tricepLongExercises = getExercisesByMuscle("22")
+        let tricepMedialExercises = getExercisesByMuscle("23")
+
+        // Ensure an incline chest exercise is included
+        let inclineChest = chestExercises.first(where: { $0.name.lowercased().contains("incline") })
+        var selectedChest = Array(chestExercises.prefix(3))
+        if let incline = inclineChest {
+            selectedChest = [incline] + selectedChest.filter { $0.id != incline.id }
+        }
+
+        // Select one exercise from each shoulder head
+        let selectedShoulders = [
+            frontDeltExercises.first,
+            lateralDeltExercises.first,
+            rearDeltExercises.first
+        ].compactMap { $0 }
+
+        // Select two tricep exercises
+        let selectedTriceps = [
+            tricepLateralExercises.first,
+            tricepLongExercises.first
+        ].compactMap { $0 }
+
+        let cstExercises = selectedChest + selectedShoulders + selectedTriceps
+        let cstRoutine = RoutineDto(
+            id: 1,
+            name: "Chest/Shoulders/Triceps",
+            description: "Strength routine for CST",
+            exerciseWithSetsDto: cstExercises.map { ExerciseWithSetsDto(exercise: $0, sets: createSetsRepsAndWeight(user: user) ?? []) }
+        )
+
+        // **QC Routine (Quads, Calves)**
+        let quadExercises = getExercisesByMuscle("7")
+        let calfExercises = getExercisesByMuscle("9")
+
+        let selectedQuads = Array(quadExercises.prefix(3))
+        let selectedCalves = Array(calfExercises.prefix(2))
+
+        let qcExercises = selectedQuads + selectedCalves
+        let qcRoutine = RoutineDto(
+            id: 2,
+            name: "Quads/Calves",
+            description: "Strength routine for quads and calves",
+            exerciseWithSetsDto: qcExercises.map { ExerciseWithSetsDto(exercise: $0, sets: createSetsRepsAndWeight(user: user) ?? []) }
+        )
+
+        // **BB Routine (Back, Biceps)**
+        let backExercises = getExercisesByMuscle("2")
+        let latExercises = getExercisesByMuscle("15")
+        let rhomboidExercises = getExercisesByMuscle("14")
+        let bicepExercises = getExercisesByMuscle("5")
+        let brachialisExercises = getExercisesByMuscle("17")
+
+        let selectedLats = Array(latExercises.prefix(1))
+        let selectedRhomboids = Array(rhomboidExercises.prefix(1))
+        let selectedBack = Array(backExercises.prefix(3))
+        let selectedBiceps = Array(bicepExercises.prefix(2))
+        let selectedBrachialis = Array(brachialisExercises.prefix(1))
+
+        let bbExercises = selectedLats + selectedRhomboids + selectedBack + selectedBiceps + selectedBrachialis
+        let bbRoutine = RoutineDto(
+            id: 3,
+            name: "Back/Biceps",
+            description: "Strength routine for back and biceps",
+            exerciseWithSetsDto: bbExercises.map { ExerciseWithSetsDto(exercise: $0, sets: createSetsRepsAndWeight(user: user) ?? []) }
+        )
+
+        // **HG Routine (Hamstrings, Glutes)**
+        let hamstringExercises = getExercisesByMuscle("8")
+        let gluteExercises = getExercisesByMuscle("12")
+
+        let selectedHamstrings = Array(hamstringExercises.prefix(3))
+        let selectedGlutes = Array(gluteExercises.prefix(2))
+
+        let hgExercises = selectedHamstrings + selectedGlutes
+        let hgRoutine = RoutineDto(
+            id: 4,
+            name: "Hamstrings/Glutes",
+            description: "Strength routine for hamstrings and glutes",
+            exerciseWithSetsDto: hgExercises.map { ExerciseWithSetsDto(exercise: $0, sets: createSetsRepsAndWeight(user: user) ?? []) }
+        )
+        return [cstRoutine, qcRoutine, bbRoutine, hgRoutine]
+    }
+
+    
+    func createWeightLossRoutines(user: UserDto) {
+        
+    }
+ 
+    func createRoutineHistory(routineSession: RoutineSessionDto) {
+        performDatabaseTask {
+            openDatabase()
+            let query = """
+            INSERT INTO RoutineSession (routine_id, user_id, date, duration, difficulty, calories_burnt, notes) 
+            VALUES (?, ?, ?, ?, ?, ?, ?);
+            """
+            
+            var statement: OpaquePointer?
+            
+            // Prepare the SQL statement
+            let prepareResult = sqlite3_prepare_v2(db, query, -1, &statement, nil)
+            if prepareResult != SQLITE_OK {
+                log(.error, "Error preparing statement: \(String(cString: sqlite3_errmsg(db)))")
+                return
+            }
+            
+            defer { sqlite3_finalize(statement) } // Ensure statement is finalized
+            
+            // Bind parameters
+            sqlite3_bind_int(statement, 1, Int32(routineSession.routineId ?? 0))
+            sqlite3_bind_int(statement, 2, Int32(routineSession.userId ?? 0))
+            
+            if let date = routineSession.date {
+                let formatter = ISO8601DateFormatter()
+                let dateString = formatter.string(from: date)
+                sqlite3_bind_text(statement, 3, dateString, -1, SQLITE_TRANSIENT)
+            } else {
+                sqlite3_bind_null(statement, 3)
+            }
+            
+            sqlite3_bind_double(statement, 4, routineSession.duration ?? 0.0)
+            sqlite3_bind_int(statement, 5, Int32(routineSession.difficulty ?? 0))
+            sqlite3_bind_int(statement, 6, Int32(routineSession.caloritesBurnt ?? 0))
+            
+            if let notes = routineSession.notes {
+                sqlite3_bind_text(statement, 7, notes, -1, SQLITE_TRANSIENT)
+            } else {
+                sqlite3_bind_null(statement, 7)
+            }
+            
+            // Execute the statement
+            let stepResult = sqlite3_step(statement)
+            if stepResult != SQLITE_DONE {
+                log(.error, "Error inserting routine session: \(String(cString: sqlite3_errmsg(db)))")
+            } else {
+                log(.info, "Routine session successfully inserted.")
+            }
+        }
+    }
     
     func fetchAllRoutines() -> [RoutineDto] {
         return performDatabaseTask { // Execute database operations on the serial queue
@@ -750,6 +949,65 @@ class DatabaseManager {
         }
     }
     
+    func getRoutineHistory(routineId: Int) -> [RoutineSessionDto] {
+        return performDatabaseTask {
+            openDatabase()
+            var routineSessions = [RoutineSessionDto]()
+            var statement: OpaquePointer?
+            
+            let query = """
+            SELECT id, routine_id, user_id, date, duration, difficulty, calories_burnt, notes
+            FROM RoutineSession
+            WHERE routine_id = ?;
+            """
+            
+            // Prepare the SQL statement
+            let prepareResult = sqlite3_prepare_v2(db, query, -1, &statement, nil)
+            if prepareResult != SQLITE_OK {
+                log(.error, "Error preparing statement: \(String(cString: sqlite3_errmsg(db)))")
+                return []
+            }
+            
+            defer { sqlite3_finalize(statement) } // Ensure the statement is finalized
+            
+            // Bind the routine ID to the statement
+            sqlite3_bind_int(statement, 1, Int32(routineId))
+            
+            // Execute the query and iterate through results
+            while sqlite3_step(statement) == SQLITE_ROW {
+                let session = RoutineSessionDto()
+                
+                session.id = Int(sqlite3_column_int(statement, 0))
+                session.routineId = Int(sqlite3_column_int(statement, 1))
+                session.userId = Int(sqlite3_column_int(statement, 2))
+                
+                if let dateText = sqlite3_column_text(statement, 3) {
+                    let dateString = String(cString: dateText)
+                    let formatter = ISO8601DateFormatter()
+                    session.date = formatter.date(from: dateString)
+                }
+                
+                session.duration = sqlite3_column_double(statement, 4)
+                session.difficulty = Int(sqlite3_column_int(statement, 5))
+                session.caloritesBurnt = Int(sqlite3_column_int(statement, 6))
+                
+                if let notesText = sqlite3_column_text(statement, 7) {
+                    session.notes = String(cString: notesText)
+                }
+                
+                routineSessions.append(session)
+            }
+            
+            if routineSessions.isEmpty {
+                log(.warning, "No routine history found for routine ID: \(routineId)")
+            } else {
+                log(.info, "Retrieved \(routineSessions.count) routine history records.")
+            }
+            return routineSessions
+        }
+    }
+
+    
     func deleteRoutine(routine: RoutineDto) -> Bool {
         return performDatabaseTask {
             openDatabase() // Ensure the database is open
@@ -860,7 +1118,7 @@ class DatabaseManager {
         }
     }
     
-    func  updateUserField(userId: Int, fieldName: String, value: Any) -> Bool {
+    func updateUserField(userId: Int, fieldName: String, value: Any) -> Bool {
         return performDatabaseTask {
             openDatabase()
             let query = "UPDATE Users SET \(fieldName) = ? WHERE user_id = ?;"
@@ -1107,14 +1365,6 @@ class DatabaseManager {
         }
     }
     
-//    func createSets(routine: RoutineDto, user: UserDto) -> SetRepsWeightDto{
-//        return performDatabaseTask{
-//            openDatabase()
-//            let level = user.currentStats.fitnessLevel
-//            let goal = user.goals.goalExercise
-//
-//        }
-//    }
     deinit {
         closeDatabase()
     }

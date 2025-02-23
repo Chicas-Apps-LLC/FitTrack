@@ -113,13 +113,14 @@ struct CurrentStatsView: View {
                 .cornerRadius(10)
 
             // Fitness Level Picker
+            Spacer()
+            Text("Fitness Level")
             Picker("Fitness Level", selection: $level) {
                 ForEach(fitnessLevels, id: \.self) { level in
                     Text(level)
                 }
             }
             .pickerStyle(.segmented)
-            .padding()
 
             // Gym Membership Toggle
             Toggle("Gym Membership", isOn: $member)
@@ -153,7 +154,6 @@ struct CurrentStatsView: View {
                     }
                 }
                 )
-           
         }
         .padding()
     }

@@ -182,6 +182,49 @@ final class DatabaseManagerTest: XCTestCase {
         }
     }
 
+    func testRoutineSessions() {
+        // Step 1: Create a test routine session
+        let testSession = RoutineSessionDto()
+        testSession.routineId = 1
+        testSession.userId = 123
+        testSession.date = Date() // Use current date
+        testSession.duration = 45.5
+        testSession.difficulty = 3
+        testSession.caloritesBurnt = 200
+        testSession.notes = "Great workout session!"
+
+        // Step 2: Insert the test session into the database
+        DatabaseManager.shared.createRoutineHistory(routineSession: testSession)
+        
+        // Step 3: Fetch routine sessions for the same routineId
+        let fetchedSessions = DatabaseManager.shared.getRoutineHistory(routineId: 1)
+        
+        // Step 4: Validate the results using XCTAssert functions
+        XCTAssertFalse(fetchedSessions.isEmpty, "Expected at least one session, but found none.")
+        
+        guard let fetchedSession = fetchedSessions.first else {
+            XCTFail("Failed to retrieve the inserted routine session.")
+            return
+        }
+        
+        XCTAssertNotNil(fetchedSession.id, "Routine session ID should not be nil.")
+        XCTAssertEqual(fetchedSession.routineId, testSession.routineId, "Routine ID mismatch.")
+        XCTAssertEqual(fetchedSession.userId, testSession.userId, "User ID mismatch.")
+        XCTAssertEqual(fetchedSession.duration, testSession.duration, "Duration mismatch.")
+        XCTAssertEqual(fetchedSession.difficulty, testSession.difficulty, "Difficulty mismatch.")
+        XCTAssertEqual(fetchedSession.caloritesBurnt, testSession.caloritesBurnt, "Calories burnt mismatch.")
+        XCTAssertEqual(fetchedSession.notes, testSession.notes, "Notes mismatch.")
+
+        if let testDate = testSession.date, let fetchedDate = fetchedSession.date {
+            let timeDifference = abs(testDate.timeIntervalSince(fetchedDate))
+            XCTAssert(timeDifference < 1.0, "Date mismatch (Expected: \(testDate), Found: \(fetchedDate))")
+        } else {
+            XCTFail("Date is nil in either test session or fetched session.")
+        }
+    }
+
+    
+    
     func testUserFunctions() throws {
         let user = DatabaseManager.shared.getFirstUser()
         
