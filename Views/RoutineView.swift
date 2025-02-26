@@ -32,7 +32,7 @@ struct RoutineView: View {
                 exercisesList
 
                 Spacer()
-
+                
                 // Start/Finish Button
                 startFinishButton
             }
@@ -65,7 +65,7 @@ struct RoutineView: View {
 
             if let exercisesWithSets = routine.exerciseWithSetsDto, !exercisesWithSets.isEmpty {
                 ForEach(exercisesWithSets, id: \ .exercise.id) { exerciseWithSets in
-                    NavigationLink(destination: ExerciseView(exercise: exerciseWithSets.exercise)) {
+                    NavigationLink(destination: ExerciseView(routine: routine)) {
                         HStack {
                             Text(exerciseWithSets.exercise.name)
                                 .font(.body)
@@ -126,15 +126,64 @@ struct RoutineView: View {
     }
 }
 
-
-
-
+struct RoutineProgressView: View {
+    var body: some View {
+        Text("Progress with this routine:")
+    }
+}
 
 #Preview {
     RoutineView(routine: RoutineDto(
         id: 1,
         name: "Full Body Routine",
         description: "A mix of upper and lower body exercises.",
-        exerciseWithSetsDto: nil
+        exerciseWithSetsDto: [
+            ExerciseWithSetsDto(
+                exercise: ExerciseDto(
+                    id: 101,
+                    name: "Squat",
+                    description: "A lower body strength exercise.",
+                    level: "Intermediate",
+                    instructions: "Stand with feet shoulder-width apart, lower hips down and back, then return to standing.",
+                    equipmentNeeded: true,
+                    overloading: true,
+                    powerStrengthSupplement: "Strength",
+                    isolationCompoundAccessory: "Compound",
+                    pushPullLegs: "Legs",
+                    verticalHorizontalRotational: "Vertical",
+                    stretch: false,
+                    videoURL: nil
+                ),
+                sets: [
+                    SetsDto(setNumber: 1, reps: 10, weight: 50),
+                    SetsDto(setNumber: 2, reps: 8, weight: 55),
+                    SetsDto(setNumber: 3, reps: 6, weight: 60)
+                ]
+            ),
+            ExerciseWithSetsDto(
+                exercise: ExerciseDto(
+                    id: 102,
+                    name: "Bench Press",
+                    description: "A chest-focused strength exercise.",
+                    level: "Intermediate",
+                    instructions: "Lie on a bench, lower the barbell to chest, and push it back up.",
+                    equipmentNeeded: true,
+                    overloading: true,
+                    powerStrengthSupplement: "Strength",
+                    isolationCompoundAccessory: "Compound",
+                    pushPullLegs: "Push",
+                    verticalHorizontalRotational: "Horizontal",
+                    stretch: false,
+                    videoURL: nil
+                ),
+                sets: [
+                    SetsDto(setNumber: 1, reps: 10, weight: 40),
+                    SetsDto(setNumber: 2, reps: 8, weight: 45),
+                    SetsDto(setNumber: 3, reps: 6, weight: 50)
+                ]
+            )
+        ]
     ))
 }
+
+

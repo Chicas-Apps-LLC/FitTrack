@@ -48,7 +48,9 @@ final class DatabaseManagerTest: XCTestCase {
         XCTAssertFalse(DatabaseManager.shared.isDatabaseOpen, "Database should report as closed.")
     }
 
-
+    /*
+     Exercise Tests
+     */
     func testGetExercisesByName() throws {
         let exercises = DatabaseManager.shared.getExercisesByName("Squat")
         XCTAssertNotNil(exercises, "Exercises array should not be nil")
@@ -65,7 +67,65 @@ final class DatabaseManagerTest: XCTestCase {
         XCTAssertNotNil(exercises, "Exercises array should not be nil")
         XCTAssertGreaterThan(exercises.count, 0, "Exercises count should be greater than zero")
     }
+    
+    func testSaveExerciseSet() throws {        
+        // Create a mock routine session, exercise, and set
+        let routineSession = RoutineSessionDto(id: 1, routineId: 1)
+        let exercise = ExerciseDto(id: 101, name: "Bench Press", description: nil, level: nil,
+                                   instructions: nil, equipmentNeeded: nil, overloading: nil,
+                                   powerStrengthSupplement: nil, isolationCompoundAccessory: nil,
+                                   pushPullLegs: nil, verticalHorizontalRotational: nil,
+                                   stretch: nil, videoURL: nil)
+        let set = SetsDto(setNumber: 1, reps: 10, weight: 135.0)
+        
+        // Act: Call the function to insert data
+        let result = DatabaseManager.shared.saveExerciseSet(routineSession: routineSession, exercise: exercise, set: set)
+        
+        // Assert: Ensure the function returns true
+        XCTAssertTrue(result, "saveExerciseSet should return true on successful insertion")
+        
+        // Verify: Check if the data was correctly inserted
+        let db = DatabaseManager.shared.db
+        let query = "SELECT exercise_id, routine_id, routine_session_id, reps, weight FROM ExerciseHistory WHERE exercise_id = ?"
+        var statement: OpaquePointer?
+        
+        guard sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK else {
+            XCTFail("Failed to prepare query statement")
+            return
+        }
+        
+        sqlite3_bind_int(statement, 1, Int32(exercise.id))
+        
+        var fetchedExerciseId: Int32 = 0
+        var fetchedRoutineId: Int32 = 0
+        var fetchedSessionId: Int32 = 0
+        var fetchedReps: Int32 = 0
+        var fetchedWeight: Double = 0.0
+        
+        if sqlite3_step(statement) == SQLITE_ROW {
+            fetchedExerciseId = sqlite3_column_int(statement, 0)
+            fetchedRoutineId = sqlite3_column_int(statement, 1)
+            fetchedSessionId = sqlite3_column_int(statement, 2)
+            fetchedReps = sqlite3_column_int(statement, 3)
+            fetchedWeight = sqlite3_column_double(statement, 4)
+        } else {
+            XCTFail("No data found in ExerciseHistory table")
+        }
+        
+        sqlite3_finalize(statement)
+        
+        // Assertions to confirm the values were stored correctly
+        XCTAssertEqual(fetchedExerciseId, Int32(exercise.id), "Exercise ID does not match")
+        XCTAssertEqual(fetchedRoutineId, Int32(routineSession.routineId!), "Routine ID does not match")
+        XCTAssertEqual(fetchedSessionId, Int32(routineSession.id!), "Routine Session ID does not match")
+        XCTAssertEqual(fetchedReps, Int32(set.reps), "Reps value does not match")
+        XCTAssertEqual(fetchedWeight, set.weight, "Weight value does not match")
+    }
 
+    
+    /*
+     Routine Tests
+     */
     func testSaveRoutineToDb() throws {
         //create exercise
         let exercise = ExerciseDto(
@@ -222,9 +282,50 @@ final class DatabaseManagerTest: XCTestCase {
             XCTFail("Date is nil in either test session or fetched session.")
         }
     }
+    
+    func testRoutineDeletion() throws {
+        var routines = DatabaseManager.shared.fetchAllRoutines()
+        
+        if(routines.count < 1) {
+            let routine = DatabaseManager.shared.createMainLiftOne(user: UserDto(userId: 9999, name: "Nala"))
+            XCTAssertTrue(DatabaseManager.shared.saveRoutineWithExercisesToDb(routine), "Failed saving routine")
+            routines.append(routine)
+        }
+        XCTAssertTrue(DatabaseManager.shared.deleteRoutine(routine: routines.first!), "Failed to delete routine")
+        
+        let secondRoutines = DatabaseManager.shared.fetchAllRoutines()
+        XCTAssertTrue(routines.count == secondRoutines.count + 1, "New routines list is not 1 less than previous routine list")
+    }
+    
+    func testRoutineDynamicallyGenerated() throws {
+        let userName = "Benito"
+        //create user
+        XCTAssertTrue(DatabaseManager.shared.createUser(withName: userName), "Failed to create user")
+        
+        //get user from db
+        guard let user = DatabaseManager.shared.getUserByName(name: userName) else {
+            XCTFail("Failed to get user from DB")
+            return
+        }
+        let id = user.userId
+        XCTAssertTrue(DatabaseManager.shared.changeFitnessLevel(userId: id, fitnessLevel: "Intermediate"), "Failed to update fitness level")
+        XCTAssertTrue(DatabaseManager.shared.changeGymMembership(userId: id, gymMembership: true), "Failed to update gym membership")
+        XCTAssertTrue(DatabaseManager.shared.changeGoalExercise(userId: id, goalExercise: "Strength"), "Failed to update goal exercise")
+        XCTAssertTrue(DatabaseManager.shared.changeGoalGymDays(userId: id, goalGymDays: 6), "Failed to update gym days")
+        
+        DatabaseManager.shared.chooseAndCreateRoutines(user: user)
+        
+        let routines = DatabaseManager.shared.fetchAllRoutines()
+        XCTAssertNotNil(routines, "Failed to fetch routines")
+        
+        for routine in routines {
+            XCTAssertFalse(((routine.exerciseWithSetsDto?.isEmpty) != nil), "Routine \(routine.name) is empty")
+        }
+    }
 
-    
-    
+    /*
+     User Tests
+     */
     func testUserFunctions() throws {
         let user = DatabaseManager.shared.getFirstUser()
         
@@ -265,20 +366,6 @@ final class DatabaseManagerTest: XCTestCase {
         } else {
             XCTFail("Failed to retrieve user by name")
         }
-    }
-    
-    func testRoutineDeletion() throws {
-        var routines = DatabaseManager.shared.fetchAllRoutines()
-        
-        if(routines.count < 1) {
-            let routine = DatabaseManager.shared.createMainLiftOne(user: UserDto(userId: 9999, name: "Nala"))
-            XCTAssertTrue(DatabaseManager.shared.saveRoutineWithExercisesToDb(routine), "Failed saving routine")
-            routines.append(routine)
-        }
-        XCTAssertTrue(DatabaseManager.shared.deleteRoutine(routine: routines.first!), "Failed to delete routine")
-        
-        let secondRoutines = DatabaseManager.shared.fetchAllRoutines()
-        XCTAssertTrue(routines.count == secondRoutines.count + 1, "New routines list is not 1 less than previous routine list")
     }
     
     func testUserDeletion() throws {

@@ -405,6 +405,78 @@ class DatabaseManager {
         }
     }
     
+    func saveExerciseSet(routineSession: RoutineSessionDto, exercise: ExerciseDto, set: SetsDto) -> Bool {
+        return performDatabaseTask {
+            openDatabase()
+            let query = """
+            INSERT INTO ExerciseHistory (exercise_id, routine_id, routine_session_id, date, reps, weight) 
+            VALUES (?, ?, ?, ?, ?, ?)
+            """
+            
+            let dm = DatabaseManager.shared.db
+            var statement: OpaquePointer?
+            
+            // Safely unwrap optional values
+            guard let routineId = routineSession.routineId, let sessionId = routineSession.id else {
+                log(.error, "Routine ID or Session ID is nil")
+                return false
+            }
+            
+            // Start a transaction
+            guard sqlite3_exec(dm, "BEGIN TRANSACTION", nil, nil, nil) == SQLITE_OK else {
+                let errorMessage = String(cString: sqlite3_errmsg(dm))
+                log(.error, "Failed to begin transaction: \(errorMessage)")
+                return false
+            }
+            
+            defer {
+                if statement != nil {
+                    sqlite3_finalize(statement)
+                }
+            }
+            
+            guard sqlite3_prepare_v2(dm, query, -1, &statement, nil) == SQLITE_OK else {
+                let errorMessage = String(cString: sqlite3_errmsg(dm))
+                log(.error, "Failed to prepare insert statement: \(errorMessage)")
+                return false
+            }
+            
+            // Bind values to the query
+            sqlite3_bind_int(statement, 1, Int32(exercise.id))
+            sqlite3_bind_int(statement, 2, Int32(routineId))
+            sqlite3_bind_int(statement, 3, Int32(sessionId))
+            
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            let dateString = dateFormatter.string(from: Date())
+            sqlite3_bind_text(statement, 4, dateString, -1, nil)
+            
+            sqlite3_bind_int(statement, 5, Int32(set.reps))
+            sqlite3_bind_double(statement, 6, set.weight)
+            
+            // Execute the statement
+            if sqlite3_step(statement) != SQLITE_DONE {
+                let errorMessage = String(cString: sqlite3_errmsg(dm))
+                log(.error, "Failed to insert exercise set: \(errorMessage)")
+                sqlite3_exec(dm, "ROLLBACK", nil, nil, nil)
+                return false
+            }
+            
+            // Commit transaction if successful
+            guard sqlite3_exec(dm, "COMMIT", nil, nil, nil) == SQLITE_OK else {
+                let errorMessage = String(cString: sqlite3_errmsg(dm))
+                log(.error, "Failed to commit transaction: \(errorMessage)")
+                sqlite3_exec(dm, "ROLLBACK", nil, nil, nil)
+                return false
+            }
+            
+            log(.info, "Successfully saved exercise set for exercise_id: \(exercise.id)")
+            return true
+        }
+    }
+
+
+    
     func saveRoutineWithExercisesToDb(_ routine: RoutineDto) -> Bool {
         return performDatabaseTask {
             openDatabase()
@@ -420,7 +492,9 @@ class DatabaseManager {
             }
 
             defer {
-                sqlite3_exec(dm, "ROLLBACK", nil, nil, nil) // Rollback transaction if commit doesn't happen
+                if sqlite3_exec(dm, "ROLLBACK", nil, nil, nil) == SQLITE_OK {
+                    log(.info, "Transaction rolled back due to an error.")
+                }
             }
 
             guard sqlite3_prepare_v2(dm, query, -1, &statement, nil) == SQLITE_OK else {
@@ -535,19 +609,32 @@ class DatabaseManager {
         if let days = days {
             for _ in 0..<days {
                 if user.currentStats.gymMembership == false {
+                    log(.info, "No gym membership, creating bodyweight routines")
                     routines.append(createBodyWeightRoutines(user: user))
                 }
-                if user.goals.goalExercise?.lowercased() == "cardio" {
+                else if user.goals.goalExercise?.lowercased() == "cardio" {
+                    log(.info, "Creating cardio routines")
                     routines = createCardioRoutines(user: user)
                     break;
                 }
                 else if user.goals.goalExercise?.lowercased() == "strength" {
+                    log(.info, "Creating strength routines")
                     routines = createStrengthRoutines(user: user)
                     break;
                 }
                 else if user.goals.goalExercise?.lowercased() == "weight loss" {
+                    log(.info, "Creating weight loss routines")
                     createWeightLossRoutines(user: user)
+                    break;
                 }
+            }
+        }
+        for routine in routines {
+            if saveRoutineWithExercisesToDb(routine) {
+                log(.info, "Successfully saved routine: \(routine.name)")
+            } else {
+                log(.error, "Failed to save routine: \(routine.name)")
+            }
         }
     }
     

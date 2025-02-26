@@ -8,13 +8,12 @@
 import SwiftUI
 
 struct ExerciseView: View {
-    var exercise: ExerciseDto
+    var routine: RoutineDto
     
-    @State private var sets = [
-        (set: 1, reps: 12, weight: 0, isDone: false),
-        (set: 2, reps: 10, weight: 0, isDone: false),
-        (set: 3, reps: 8, weight: 0, isDone: false)
-    ]
+    @State private var currentIndex: Int = 0
+    @State private var exercise: ExerciseDto
+    @State private var sets: [(setNumber: Int, reps: Int, weight: Double, isDone: Bool)] = []
+
     @State private var timerValue = 0
     @State private var isTimerActive = false
     @State private var timer: Timer? = nil
@@ -22,20 +21,49 @@ struct ExerciseView: View {
 
     let primaryColor = Color(hex: "#19d4be")
 
+    init(routine: RoutineDto) {
+        self.routine = routine
+        let initialExerciseWithSets = routine.exerciseWithSetsDto?.first ?? ExerciseWithSetsDto(exercise: ExerciseDto(id: 0, name: "No Exercise", description: nil, level: nil, instructions: nil, equipmentNeeded: nil, overloading: nil, powerStrengthSupplement: nil, isolationCompoundAccessory: nil, pushPullLegs: nil, verticalHorizontalRotational: nil, stretch: nil, videoURL: nil), sets: [])
+        _exercise = State(initialValue: initialExerciseWithSets.exercise)
+        _sets = State(initialValue: initialExerciseWithSets.sets.map { ($0.setNumber, $0.reps, $0.weight, false) })
+    }
+
     var body: some View {
         VStack {
             Spacer()
-            NavigationLink(destination: ExerciseDetailsView(exercise: exercise)){
-                Text(exercise.name)
-                    .font(.title)
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(10)
-                    .shadow(radius: 2)
-                    .foregroundColor(.black)
+            HStack {
+                Button(action: previousExercise) {
+                    Image(systemName: "chevron.left")
+                        .font(.title)
+                        .padding()
+                        .background(Color.white.opacity(0.7))
+                        .clipShape(Circle())
+                        .shadow(radius: 2)
+                }
+                .disabled(currentIndex == 0)
+                
+                NavigationLink(destination: ExerciseDetailsView(exercise: exercise)) {
+                    Text(exercise.name)
+                        .font(.title)
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(10)
+                        .shadow(radius: 2)
+                        .foregroundColor(.black)
+                }
+
+                Button(action: nextExercise) {
+                    Image(systemName: "chevron.right")
+                        .font(.title)
+                        .padding()
+                        .background(Color.white.opacity(0.7))
+                        .clipShape(Circle())
+                        .shadow(radius: 2)
+                }
+                .disabled(currentIndex == (routine.exerciseWithSetsDto?.count ?? 1) - 1)
             }
             Spacer()
-            
+
             // Table with sets/reps/weight
             VStack(alignment: .leading) {
                 HStack(spacing: 16) {
@@ -47,10 +75,10 @@ struct ExerciseView: View {
                 .padding()
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(10)
-                
+
                 ForEach(sets.indices, id: \.self) { index in
                     HStack(spacing: 16) {
-                        Text("\(sets[index].set)")
+                        Text("\(sets[index].setNumber)")
                             .frame(maxWidth: .infinity, alignment: .center)
 
                         if isEditing {
@@ -66,7 +94,7 @@ struct ExerciseView: View {
                         } else {
                             Text("\(sets[index].reps)")
                                 .frame(maxWidth: .infinity, alignment: .center)
-                            Text("\(sets[index].weight) lbs")
+                            Text("\(formattedWeight(sets[index].weight)) lbs")
                                 .frame(maxWidth: .infinity, alignment: .center)
                         }
 
@@ -83,9 +111,9 @@ struct ExerciseView: View {
             .background(Color.white)
             .cornerRadius(15)
             .shadow(radius: 5)
-            
+
             Spacer()
-            
+
             // Rest timer
             if isTimerActive {
                 Text("Rest Timer: \(formattedTime)")
@@ -94,10 +122,10 @@ struct ExerciseView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.top, 10)
             }
-            
+
             Spacer()
 
-            // Edit and Done buttons
+            // Edit button
             HStack {
                 Button(action: { isEditing.toggle() }) {
                     Text(isEditing ? "Done" : "Edit")
@@ -117,19 +145,30 @@ struct ExerciseView: View {
             timerValue = 0
         }
     }
-    
-    // Mark set as done and start timer
-    private func markSetAsDone(index: Int) {
-        withAnimation {
-            sets[index].isDone = true
-        }
-        startTimer()
+
+    // MARK: - Navigation
+    private func previousExercise() {
+        guard currentIndex > 0, let exercises = routine.exerciseWithSetsDto else { return }
+        currentIndex -= 1
+        updateExercise(index: currentIndex, exercises: exercises)
     }
-    
-    // Timer logic
+
+    private func nextExercise() {
+        guard let exercises = routine.exerciseWithSetsDto, currentIndex < exercises.count - 1 else { return }
+        currentIndex += 1
+        updateExercise(index: currentIndex, exercises: exercises)
+    }
+
+    private func updateExercise(index: Int, exercises: [ExerciseWithSetsDto]) {
+        let newExerciseWithSets = exercises[index]
+        exercise = newExerciseWithSets.exercise
+        sets = newExerciseWithSets.sets.map { ($0.setNumber, $0.reps, $0.weight, false) }
+    }
+
+    // MARK: - Timer Logic
     private func startTimer() {
         isTimerActive = true
-        timerValue = 90 // 1 minute 30 seconds in seconds
+        timerValue = 90
         timer?.invalidate()
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             if timerValue > 0 {
@@ -140,47 +179,90 @@ struct ExerciseView: View {
             }
         }
     }
-    
-    // Format timer into mm:ss
+
     private var formattedTime: String {
         let minutes = timerValue / 60
         let seconds = timerValue % 60
         return String(format: "%02d:%02d", minutes, seconds)
     }
     
+    private func formattedWeight(_ weight: Double) -> String {
+        if weight.truncatingRemainder(dividingBy: 1) == 0 {
+            return String(format: "%.0f", weight)
+        }
+        else {
+            return String(format: "%.1f", weight)
+        }
+    }
+
     private func toggleSetStatus(index: Int) {
         sets[index].isDone.toggle()
         if sets[index].isDone {
-            startTimer() // Start the timer only if the set is marked as done
+            startTimer()
         } else {
-            timer?.invalidate() // Stop the timer if a set is unchecked
+            timer?.invalidate()
             isTimerActive = false
         }
     }
 }
 
+
 struct ExerciseView_Previews: PreviewProvider {
     static var previews: some View {
-        ExerciseView(exercise: ExerciseDto(
+        let sampleExercises = [
+            ExerciseWithSetsDto(
+                exercise: ExerciseDto(
+                    id: 1,
+                    name: "Bench Press",
+                    description: "A classic chest exercise",
+                    level: "Intermediate",
+                    instructions: "Lie on a bench and press the barbell up.",
+                    equipmentNeeded: true,
+                    overloading: true,
+                    powerStrengthSupplement: "Yes",
+                    isolationCompoundAccessory: "Compound",
+                    pushPullLegs: "Push",
+                    verticalHorizontalRotational: "Horizontal",
+                    stretch: false,
+                    videoURL: nil
+                ),
+                sets: [
+                    SetsDto(setNumber: 1, reps: 12, weight: 135),
+                    SetsDto(setNumber: 2, reps: 10, weight: 145),
+                    SetsDto(setNumber: 3, reps: 8, weight: 155)
+                ]
+            ),
+            ExerciseWithSetsDto(
+                exercise: ExerciseDto(
+                    id: 2,
+                    name: "Squat",
+                    description: "A fundamental leg exercise",
+                    level: "Advanced",
+                    instructions: "Squat down and stand up with weight.",
+                    equipmentNeeded: true,
+                    overloading: true,
+                    powerStrengthSupplement: "Yes",
+                    isolationCompoundAccessory: "Compound",
+                    pushPullLegs: "Legs",
+                    verticalHorizontalRotational: "Vertical",
+                    stretch: false,
+                    videoURL: nil
+                ),
+                sets: [
+                    SetsDto(setNumber: 1, reps: 10, weight: 185),
+                    SetsDto(setNumber: 2, reps: 8, weight: 205),
+                    SetsDto(setNumber: 3, reps: 6, weight: 225)
+                ]
+            )
+        ]
+
+        let sampleRoutine = RoutineDto(
             id: 1,
-            name: "Barbell Squat",
-            description: "A compound exercise that targets the lower body muscles, including quadriceps, hamstrings, and glutes.",
-            level: "Intermediate",
-            instructions: """
-                1. Set the barbell at shoulder height.
-                2. Step under the bar and place it across your shoulders.
-                3. Grip the bar, lift it off the rack, and step back.
-                4. Squat down until your thighs are parallel to the floor.
-                5. Push back up to the starting position.
-            """,
-            equipmentNeeded: true,
-            overloading: nil,
-            powerStrengthSupplement: nil,
-            isolationCompoundAccessory: nil,
-            pushPullLegs: "Legs",
-            verticalHorizontalRotational: nil,
-            stretch: nil,
-            videoURL: nil
-        ))
+            name: "Full Body Strength",
+            description: "A routine focusing on overall strength.",
+            exerciseWithSetsDto: sampleExercises
+        )
+
+        return ExerciseView(routine: sampleRoutine)
     }
 }
