@@ -405,7 +405,7 @@ class DatabaseManager {
         }
     }
     
-    func saveExerciseSet(routineSession: RoutineSessionDto, exercise: ExerciseDto, set: SetsDto) -> Bool {
+    func saveExerciseSet(routineHistory: RoutineHistoryDto, exercise: ExerciseDto, set: SetsDto) -> Bool {
         return performDatabaseTask {
             openDatabase()
             let query = """
@@ -417,7 +417,7 @@ class DatabaseManager {
             var statement: OpaquePointer?
             
             // Safely unwrap optional values
-            guard let routineId = routineSession.routineId, let sessionId = routineSession.id else {
+            guard let routineId = routineHistory.routineId, let sessionId = routineHistory.id else {
                 log(.error, "Routine ID or Session ID is nil")
                 return false
             }
@@ -765,11 +765,11 @@ class DatabaseManager {
         
     }
  
-    func createRoutineHistory(routineSession: RoutineSessionDto) {
+    func createRoutineHistory(routineHistory: RoutineHistoryDto) {
         performDatabaseTask {
             openDatabase()
             let query = """
-            INSERT INTO RoutineSession (routine_id, user_id, date, duration, difficulty, calories_burnt, notes) 
+            INSERT INTO RoutineHistory (routine_id, user_id, date, duration, difficulty, calories_burnt, notes) 
             VALUES (?, ?, ?, ?, ?, ?, ?);
             """
             
@@ -785,10 +785,10 @@ class DatabaseManager {
             defer { sqlite3_finalize(statement) } // Ensure statement is finalized
             
             // Bind parameters
-            sqlite3_bind_int(statement, 1, Int32(routineSession.routineId ?? 0))
-            sqlite3_bind_int(statement, 2, Int32(routineSession.userId ?? 0))
+            sqlite3_bind_int(statement, 1, Int32(routineHistory.routineId ?? 0))
+            sqlite3_bind_int(statement, 2, Int32(routineHistory.userId ?? 0))
             
-            if let date = routineSession.date {
+            if let date = routineHistory.date {
                 let formatter = ISO8601DateFormatter()
                 let dateString = formatter.string(from: date)
                 sqlite3_bind_text(statement, 3, dateString, -1, SQLITE_TRANSIENT)
@@ -796,11 +796,11 @@ class DatabaseManager {
                 sqlite3_bind_null(statement, 3)
             }
             
-            sqlite3_bind_double(statement, 4, routineSession.duration ?? 0.0)
-            sqlite3_bind_int(statement, 5, Int32(routineSession.difficulty ?? 0))
-            sqlite3_bind_int(statement, 6, Int32(routineSession.caloritesBurnt ?? 0))
+            sqlite3_bind_double(statement, 4, routineHistory.duration ?? 0.0)
+            sqlite3_bind_int(statement, 5, Int32(routineHistory.difficulty ?? 0))
+            sqlite3_bind_int(statement, 6, Int32(routineHistory.caloritesBurnt ?? 0))
             
-            if let notes = routineSession.notes {
+            if let notes = routineHistory.notes {
                 sqlite3_bind_text(statement, 7, notes, -1, SQLITE_TRANSIENT)
             } else {
                 sqlite3_bind_null(statement, 7)
@@ -1036,15 +1036,15 @@ class DatabaseManager {
         }
     }
     
-    func getRoutineHistory(routineId: Int) -> [RoutineSessionDto] {
+    func getRoutineHistory(routineId: Int) -> [RoutineHistoryDto] {
         return performDatabaseTask {
             openDatabase()
-            var routineSessions = [RoutineSessionDto]()
+            var routineSessions = [RoutineHistoryDto]()
             var statement: OpaquePointer?
             
             let query = """
             SELECT id, routine_id, user_id, date, duration, difficulty, calories_burnt, notes
-            FROM RoutineSession
+            FROM RoutineHistory
             WHERE routine_id = ?;
             """
             
@@ -1062,7 +1062,7 @@ class DatabaseManager {
             
             // Execute the query and iterate through results
             while sqlite3_step(statement) == SQLITE_ROW {
-                let session = RoutineSessionDto()
+                let session = RoutineHistoryDto()
                 
                 session.id = Int(sqlite3_column_int(statement, 0))
                 session.routineId = Int(sqlite3_column_int(statement, 1))

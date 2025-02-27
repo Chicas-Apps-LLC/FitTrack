@@ -14,12 +14,11 @@ struct ExerciseView: View {
     @State private var exercise: ExerciseDto
     @State private var sets: [(setNumber: Int, reps: Int, weight: Double, isDone: Bool)] = []
 
+    @State private var exerciseHistory: [ExerciseHistoryDto] = []
     @State private var timerValue = 0
     @State private var isTimerActive = false
     @State private var timer: Timer? = nil
     @State private var isEditing = false
-
-    let primaryColor = Color(hex: "#19d4be")
 
     init(routine: RoutineDto) {
         self.routine = routine
@@ -36,7 +35,7 @@ struct ExerciseView: View {
                     Image(systemName: "chevron.left")
                         .font(.title)
                         .padding()
-                        .background(Color.white.opacity(0.7))
+                        .background(AppColors.light.opacity(0.7))
                         .clipShape(Circle())
                         .shadow(radius: 2)
                 }
@@ -56,7 +55,7 @@ struct ExerciseView: View {
                     Image(systemName: "chevron.right")
                         .font(.title)
                         .padding()
-                        .background(Color.white.opacity(0.7))
+                        .background(AppColors.light.opacity(0.7))
                         .clipShape(Circle())
                         .shadow(radius: 2)
                 }
@@ -100,7 +99,7 @@ struct ExerciseView: View {
 
                         Button(action: { toggleSetStatus(index: index) }) {
                             Image(systemName: sets[index].isDone ? "checkmark.circle.fill" : "circle")
-                                .foregroundColor(sets[index].isDone ? primaryColor : .gray)
+                                .foregroundColor(sets[index].isDone ? AppColors.primary : AppColors.gray)
                         }
                         .frame(maxWidth: .infinity, alignment: .center)
                     }
@@ -113,12 +112,14 @@ struct ExerciseView: View {
             .shadow(radius: 5)
 
             Spacer()
+            
+            progressSection
 
             // Rest timer
             if isTimerActive {
                 Text("Rest Timer: \(formattedTime)")
                     .font(.headline)
-                    .foregroundColor(primaryColor)
+                    .foregroundColor(AppColors.primary)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.top, 10)
             }
@@ -145,7 +146,89 @@ struct ExerciseView: View {
             timerValue = 0
         }
     }
+    
+    private var progressSection: some View {
+        VStack(alignment: .leading) {
+            Text("Exercise Progress")
+                .font(.title2)
+                .bold()
+                .padding(.bottom, 5)
+            
+            if exerciseHistory.isEmpty {
+                Text("No history available.")
+                    .foregroundColor(.gray)
+                    .padding()
+            } else {
+                ForEach(exerciseHistory, id: \.id) { history in
+                    VStack(alignment: .leading) {
+                        Text("Date: \(formattedDate(history.date))")
+                            .font(.headline)
+                        
+                        ForEach(history.set, id: \.setNumber) { set in
+                            HStack {
+                                Text("Set: \(set.setNumber)")
+                                Spacer()
+                                Text("Reps: \(set.reps)")
+                                Spacer()
+                                Text("Weight: \(formattedWeight(set.weight)) lbs")
+                            }
+                            .font(.subheadline)
+                            .padding(.vertical, 2)
+                        }
+                        Divider()
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+        }
+        .padding()
+        .onAppear {
+            loadExerciseHistory()
+        }
+        .background(Color.white)
+        .cornerRadius(15)
+        .shadow(radius: 5)
+        .onDisappear {
+            timer?.invalidate()
+            isTimerActive = false
+            timerValue = 0
+        }
+    }
 
+
+    // MARK: - Load Exercise History
+    private func loadExerciseHistory() {
+        // Simulating data fetch (replace with real database call)
+        let sampleHistory = [
+            ExerciseHistoryDto(
+                id: 1,
+                exerciseId: exercise.id,
+                routineId: routine.id,
+                date: Date().addingTimeInterval(-86400),
+                sets: [
+                    SetsDto(setNumber: 1, reps: 10, weight: 50),
+                    SetsDto(setNumber: 2, reps: 8, weight: 52.5)
+                ]
+            ),
+            ExerciseHistoryDto(
+                id: 2,
+                exerciseId: exercise.id,
+                routineId: routine.id,
+                date: Date().addingTimeInterval(-172800),
+                sets: [
+                    SetsDto(setNumber: 1, reps: 9, weight: 55),
+                    SetsDto(setNumber: 2, reps: 7, weight: 57.5)
+                ]
+            )
+        ]
+        exerciseHistory = sampleHistory.filter { $0.exerciseId == exercise.id }
+    }
+
+    // MARK: - Helpers
+    private func formattedWeight(_ weight: Double) -> String {
+        return weight.truncatingRemainder(dividingBy: 1) == 0 ? String(format: "%.0f", weight) : String(format: "%.1f", weight)
+    }
+    
     // MARK: - Navigation
     private func previousExercise() {
         guard currentIndex > 0, let exercises = routine.exerciseWithSetsDto else { return }
@@ -186,14 +269,11 @@ struct ExerciseView: View {
         return String(format: "%02d:%02d", minutes, seconds)
     }
     
-    private func formattedWeight(_ weight: Double) -> String {
-        if weight.truncatingRemainder(dividingBy: 1) == 0 {
-            return String(format: "%.0f", weight)
+    private func formattedDate(_ date: Date) -> String {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            return formatter.string(from: date)
         }
-        else {
-            return String(format: "%.1f", weight)
-        }
-    }
 
     private func toggleSetStatus(index: Int) {
         sets[index].isDone.toggle()

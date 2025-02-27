@@ -7,8 +7,9 @@
 
 import Foundation
 
-final class RoutineSessionDto: ObservableObject {
+final class RoutineHistoryDto: ObservableObject, Identifiable {
     @Published var id: Int?
+    
     @Published var routineId: Int?
     @Published var userId: Int?
     @Published var date: Date?
@@ -28,5 +29,9 @@ final class RoutineSessionDto: ObservableObject {
         self.difficulty = difficulty
         self.caloritesBurnt = caloritesBurnt
         self.notes = notes
+    }
+    
+    var wrappedId: Int {
+        id ?? UUID().hashValue // Fallback for when id is nil
     }
 }

@@ -70,7 +70,7 @@ final class DatabaseManagerTest: XCTestCase {
     
     func testSaveExerciseSet() throws {        
         // Create a mock routine session, exercise, and set
-        let routineSession = RoutineSessionDto(id: 1, routineId: 1)
+        let routineSession = RoutineHistoryDto(id: 1, routineId: 1)
         let exercise = ExerciseDto(id: 101, name: "Bench Press", description: nil, level: nil,
                                    instructions: nil, equipmentNeeded: nil, overloading: nil,
                                    powerStrengthSupplement: nil, isolationCompoundAccessory: nil,
@@ -79,7 +79,7 @@ final class DatabaseManagerTest: XCTestCase {
         let set = SetsDto(setNumber: 1, reps: 10, weight: 135.0)
         
         // Act: Call the function to insert data
-        let result = DatabaseManager.shared.saveExerciseSet(routineSession: routineSession, exercise: exercise, set: set)
+        let result = DatabaseManager.shared.saveExerciseSet(routineHistory: routineSession, exercise: exercise, set: set)
         
         // Assert: Ensure the function returns true
         XCTAssertTrue(result, "saveExerciseSet should return true on successful insertion")
@@ -244,7 +244,7 @@ final class DatabaseManagerTest: XCTestCase {
 
     func testRoutineSessions() {
         // Step 1: Create a test routine session
-        let testSession = RoutineSessionDto()
+        let testSession = RoutineHistoryDto()
         testSession.routineId = 1
         testSession.userId = 123
         testSession.date = Date() // Use current date
@@ -254,7 +254,7 @@ final class DatabaseManagerTest: XCTestCase {
         testSession.notes = "Great workout session!"
 
         // Step 2: Insert the test session into the database
-        DatabaseManager.shared.createRoutineHistory(routineSession: testSession)
+        DatabaseManager.shared.createRoutineHistory(routineHistory: testSession)
         
         // Step 3: Fetch routine sessions for the same routineId
         let fetchedSessions = DatabaseManager.shared.getRoutineHistory(routineId: 1)
