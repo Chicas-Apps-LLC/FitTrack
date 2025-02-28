@@ -111,10 +111,6 @@ struct ExerciseView: View {
             .cornerRadius(15)
             .shadow(radius: 5)
 
-            Spacer()
-            
-            progressSection
-
             // Rest timer
             if isTimerActive {
                 Text("Rest Timer: \(formattedTime)")
@@ -123,6 +119,13 @@ struct ExerciseView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.top, 10)
             }
+            
+            Spacer()
+            
+            ProgressSection(exerciseHistory: exerciseHistory)
+                .onAppear {
+                    mockLoadExerciseHistory()
+                }
 
             Spacer()
 
@@ -146,58 +149,12 @@ struct ExerciseView: View {
             timerValue = 0
         }
     }
-    
-    private var progressSection: some View {
-        VStack(alignment: .leading) {
-            Text("Exercise Progress")
-                .font(.title2)
-                .bold()
-                .padding(.bottom, 5)
-            
-            if exerciseHistory.isEmpty {
-                Text("No history available.")
-                    .foregroundColor(.gray)
-                    .padding()
-            } else {
-                ForEach(exerciseHistory, id: \.id) { history in
-                    VStack(alignment: .leading) {
-                        Text("Date: \(formattedDate(history.date))")
-                            .font(.headline)
-                        
-                        ForEach(history.set, id: \.setNumber) { set in
-                            HStack {
-                                Text("Set: \(set.setNumber)")
-                                Spacer()
-                                Text("Reps: \(set.reps)")
-                                Spacer()
-                                Text("Weight: \(formattedWeight(set.weight)) lbs")
-                            }
-                            .font(.subheadline)
-                            .padding(.vertical, 2)
-                        }
-                        Divider()
-                    }
-                    .padding(.vertical, 4)
-                }
-            }
-        }
-        .padding()
-        .onAppear {
-            loadExerciseHistory()
-        }
-        .background(Color.white)
-        .cornerRadius(15)
-        .shadow(radius: 5)
-        .onDisappear {
-            timer?.invalidate()
-            isTimerActive = false
-            timerValue = 0
-        }
-    }
-
 
     // MARK: - Load Exercise History
     private func loadExerciseHistory() {
+        
+    }
+    private func mockLoadExerciseHistory() {
         // Simulating data fetch (replace with real database call)
         let sampleHistory = [
             ExerciseHistoryDto(
@@ -283,6 +240,68 @@ struct ExerciseView: View {
             timer?.invalidate()
             isTimerActive = false
         }
+    }
+}
+
+struct ProgressSection: View {
+    var exerciseHistory: [ExerciseHistoryDto]
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text("Exercise Progress")
+                .font(.title2)
+                .bold()
+                .padding(.bottom, 5)
+
+            Group {  // Helps Swift break down type-checking
+                if exerciseHistory.isEmpty {
+                    Text("No history available.")
+                        .foregroundColor(.gray)
+                        .padding()
+                } else {
+                    ForEach(exerciseHistory, id: \.id) { history in
+                        VStack(alignment: .leading) {
+                            secondForEach(history: history) // Correct usage
+                            Divider()
+                        }
+                        .padding(.vertical, 4)
+                    }
+                }
+            }
+        }
+        .padding()
+        .background(Color.white)
+        .cornerRadius(15)
+        .shadow(radius: 5)
+    }
+
+    private func secondForEach(history: ExerciseHistoryDto) -> some View {
+        VStack(alignment: .leading) {
+            Text("Date: \(formattedDate(history.date))")
+                .font(.headline)
+
+            ForEach(history.sets) { set in
+                HStack {
+                    Text("Set: \(set.setNumber)")
+                    Spacer()
+                    Text("Reps: \(set.reps)")
+                    Spacer()
+                    Text("Weight: \(formattedWeight(set.weight)) lbs")
+                }
+                .font(.subheadline)
+                .padding(.vertical, 2)
+            }
+        }
+    }
+
+    private func formattedWeight(_ weight: Double) -> String {
+        weight.truncatingRemainder(dividingBy: 1) == 0 ? String(format: "%.0f", weight) : String(format: "%.1f", weight)
+    }
+
+    private func formattedDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        return formatter.string(from: date)
     }
 }
 

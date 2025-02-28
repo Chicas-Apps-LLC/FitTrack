@@ -242,7 +242,7 @@ final class DatabaseManagerTest: XCTestCase {
         }
     }
 
-    func testRoutineSessions() {
+    func testRoutineHistory() {
         // Step 1: Create a test routine session
         let testSession = RoutineHistoryDto()
         testSession.routineId = 1
@@ -250,7 +250,7 @@ final class DatabaseManagerTest: XCTestCase {
         testSession.date = Date() // Use current date
         testSession.duration = 45.5
         testSession.difficulty = 3
-        testSession.caloritesBurnt = 200
+        testSession.caloriesBurnt = 200
         testSession.notes = "Great workout session!"
 
         // Step 2: Insert the test session into the database
@@ -272,7 +272,7 @@ final class DatabaseManagerTest: XCTestCase {
         XCTAssertEqual(fetchedSession.userId, testSession.userId, "User ID mismatch.")
         XCTAssertEqual(fetchedSession.duration, testSession.duration, "Duration mismatch.")
         XCTAssertEqual(fetchedSession.difficulty, testSession.difficulty, "Difficulty mismatch.")
-        XCTAssertEqual(fetchedSession.caloritesBurnt, testSession.caloritesBurnt, "Calories burnt mismatch.")
+        XCTAssertEqual(fetchedSession.caloriesBurnt, testSession.caloriesBurnt, "Calories burnt mismatch.")
         XCTAssertEqual(fetchedSession.notes, testSession.notes, "Notes mismatch.")
 
         if let testDate = testSession.date, let fetchedDate = fetchedSession.date {

@@ -77,7 +77,6 @@ final class RoutineViewModel: ObservableObject {
         loadAllRoutines()
     }
 
-
     func loadAllRoutines() {
         DispatchQueue.global(qos: .background).async {
             let allRoutines = DatabaseManager.shared.fetchAllRoutines()
@@ -105,6 +104,10 @@ final class RoutineViewModel: ObservableObject {
 
         log(.info, "\(routine.name) deleted successfully.")
         loadAllRoutines()
+    }
+    
+    func getRoutineHistory(routineId: Int) -> [RoutineHistoryDto] {
+        DatabaseManager.shared.getRoutineHistory(routineId: routineId)
     }
     
     func createSetsRepsAndWeight(exercise: ExerciseDto, level: String, goal: String) -> ExerciseWithSetsDto {

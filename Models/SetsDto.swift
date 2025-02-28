@@ -6,7 +6,8 @@
 //
 import Foundation
 
-struct SetsDto {
+struct SetsDto: Identifiable {
+    var id = UUID() // Unique identifier
     var setNumber: Int
     var reps: Int
     let weight: Double

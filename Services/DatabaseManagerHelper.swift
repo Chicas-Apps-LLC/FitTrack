@@ -45,8 +45,12 @@ class DatabaseManagerHelper {
         return filteredExercises
     }
     
-    
-
+    func dateFormatter() -> DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss" // Match your database format
+        formatter.timeZone = TimeZone.current
+        return formatter
+    }
 }
 
 

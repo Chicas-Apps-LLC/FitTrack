@@ -43,7 +43,7 @@ struct RoutineView: View {
                 .padding()
                 .navigationTitle("Workout Routine")
                 .onAppear {
-                    loadRoutineHistory()
+                    mockLoadRoutineHistory()
                 }
             }
             startFinishButton
@@ -134,29 +134,7 @@ struct RoutineView: View {
             }
 
             if isProgressExpanded { // Only show when expanded
-                VStack(alignment: .leading, spacing: 10) {
-                    if pastSessions.isEmpty {
-                        Text("No past sessions yet.")
-                            .foregroundColor(.gray)
-                            .italic()
-                            .frame(maxWidth: .infinity, alignment: .center)
-                    } else {
-                        ForEach(pastSessions) { session in
-                            VStack(alignment: .leading) {
-                                Text("Workout on \(session.date?.formatted() ?? "Unknown Date")")
-                                    .font(.headline)
-                                Text("Duration: \(formattedTime(Int(session.duration ?? 0)))")
-                                Text("Calories Burnt: \(session.caloritesBurnt ?? 0)")
-                                Text("Notes: \(session.notes ?? "No notes")")
-                            }
-                            .padding()
-                            .background(Color.white)
-                            .cornerRadius(10)
-                            .shadow(radius: 2)
-                        }
-                    }
-                }
-                .padding(.top, 5)
+                ExpandedProgressHistoryView(pastSessions: pastSessions)
             }
         }
         .padding()
@@ -166,16 +144,18 @@ struct RoutineView: View {
         .padding(.horizontal)
     }
 
-
     // MARK: - Helpers
-
     private func loadRoutineHistory() {
+        
+    }
+    
+    private func mockLoadRoutineHistory() {
         // TODO: Replace with actual database fetch logic
         self.pastSessions = [
             RoutineHistoryDto(id: 1, routineId: routine.id, userId: 1, date: Date().addingTimeInterval(-86400),
-                              duration: 5200, difficulty: 3, caloritesBurnt: 350, notes: "Felt strong today"),
+                              duration: 5200, difficulty: 3, caloriesBurnt: 350, notes: "Felt strong today"),
             RoutineHistoryDto(id: 2, routineId: routine.id, userId: 1, date: Date().addingTimeInterval(-172800),
-                              duration: 3400, difficulty: 4, caloritesBurnt: 400, notes: "Increased weights")
+                              duration: 3400, difficulty: 4, caloriesBurnt: 400, notes: "Increased weights")
         ]
     }
 
@@ -209,6 +189,50 @@ struct RoutineView: View {
     }
 }
 
+struct ExpandedProgressHistoryView: View {
+    var pastSessions: [RoutineHistoryDto]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            if pastSessions.isEmpty {
+                Text("No past sessions yet.")
+                    .foregroundColor(.gray)
+                    .italic()
+                    .frame(maxWidth: .infinity, alignment: .center)
+            } else {
+                ForEach(pastSessions) { session in
+                    VStack(alignment: .leading) {
+                        Text("Workout on \(session.date?.formatted() ?? "No date")")
+                            .font(.headline)
+                        Text("Duration: \(formattedTime(Int(session.duration ?? 0)))")
+                    }
+                    
+                }
+//                ForEach(pastSessions) { session in
+//                    VStack(alignment: .leading) {
+//                        Text("Workout on \(session.date?.formatted() ?? "Unknown Date")")
+//                            .font(.headline)
+//                        Text("Duration: \(formattedTime(Int(session.duration ?? 0)))")
+//                        Text("Calories Burnt: \(session.caloritesBurnt ?? 0)")
+//                        Text("Notes: \(session.notes ?? "No notes")")
+//                    }
+//                    .padding()
+//                    .background(Color.white)
+//                    .cornerRadius(10)
+//                    .shadow(radius: 2)
+//                }
+            }
+        }
+        .padding(.top, 5)
+    }
+
+    private func formattedTime(_ seconds: Int) -> String {
+        let hours = seconds / 3600
+        let minutes = (seconds % 3600) / 60
+        let sec = seconds % 60
+        return String(format: "%02d:%02d:%02d", hours, minutes, sec)
+    }
+}
 
 #Preview {
     RoutineView(routine: RoutineDto(

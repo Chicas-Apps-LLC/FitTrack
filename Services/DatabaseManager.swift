@@ -798,7 +798,7 @@ class DatabaseManager {
             
             sqlite3_bind_double(statement, 4, routineHistory.duration ?? 0.0)
             sqlite3_bind_int(statement, 5, Int32(routineHistory.difficulty ?? 0))
-            sqlite3_bind_int(statement, 6, Int32(routineHistory.caloritesBurnt ?? 0))
+            sqlite3_bind_int(statement, 6, Int32(routineHistory.caloriesBurnt ?? 0))
             
             if let notes = routineHistory.notes {
                 sqlite3_bind_text(statement, 7, notes, -1, SQLITE_TRANSIENT)
@@ -817,7 +817,7 @@ class DatabaseManager {
     }
     
     func fetchAllRoutines() -> [RoutineDto] {
-        return performDatabaseTask { // Execute database operations on the serial queue
+        return performDatabaseTask {
             openDatabase()
             var routines = [RoutineDto]()
             log(.info, "Fetching all routines...")
@@ -1076,7 +1076,7 @@ class DatabaseManager {
                 
                 session.duration = sqlite3_column_double(statement, 4)
                 session.difficulty = Int(sqlite3_column_int(statement, 5))
-                session.caloritesBurnt = Int(sqlite3_column_int(statement, 6))
+                session.caloriesBurnt = Int(sqlite3_column_int(statement, 6))
                 
                 if let notesText = sqlite3_column_text(statement, 7) {
                     session.notes = String(cString: notesText)
