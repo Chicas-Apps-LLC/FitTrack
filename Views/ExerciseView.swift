@@ -19,6 +19,8 @@ struct ExerciseView: View {
     @State private var isTimerActive = false
     @State private var timer: Timer? = nil
     @State private var isEditing = false
+    
+    @ObservedObject private var viewModel = ExerciseViewModel()
 
     init(routine: RoutineDto) {
         self.routine = routine
@@ -124,7 +126,7 @@ struct ExerciseView: View {
             
             ProgressSection(exerciseHistory: exerciseHistory)
                 .onAppear {
-                    mockLoadExerciseHistory()
+                    //mockLoadExerciseHistory()
                     loadExerciseHistory()
                 }
 
@@ -153,7 +155,7 @@ struct ExerciseView: View {
 
     // MARK: - Load Exercise History
     private func loadExerciseHistory() {
-        
+        exerciseHistory = viewModel.getExerciseHistory(exerciseId: exercise.id)
     }
     
     private func mockLoadExerciseHistory() {

@@ -10,6 +10,8 @@ import Foundation
 final class ExerciseViewModel: ObservableObject {
     @Published var exercises: [ExerciseWithSetsDto] = []
     
+    private let dm = DatabaseManager.shared
+    
     func createSetsRepsAndWeight(exercise: ExerciseDto, level: String, goal: String) -> ExerciseWithSetsDto {
         let repRanges: [String: [String: ClosedRange<Int>]] = [
             "Beginner": [
@@ -84,5 +86,7 @@ final class ExerciseViewModel: ObservableObject {
         return ExerciseWithSetsDto(exercise: exercise, sets: sets)
     }
     
-    
+    func getExerciseHistory(exerciseId: Int) -> [ExerciseHistoryDto] {
+        return dm.getExerciseHistory(exerciseId: exerciseId)
+    }
 }
