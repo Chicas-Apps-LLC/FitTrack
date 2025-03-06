@@ -199,6 +199,76 @@ class DatabaseManager {
             exerciseWithSetsDto: exercisesWithSets
         )
     }
+    
+    func saveExerciseSet(routineHistory: RoutineHistoryDto, exercise: ExerciseDto, set: SetsDto) -> Bool {
+        return performDatabaseTask {
+            openDatabase()
+            let query = """
+            INSERT INTO ExerciseHistory (exercise_id, routine_id, routine_history_id, date, reps, weight) 
+            VALUES (?, ?, ?, ?, ?, ?)
+            """
+            
+            let dm = DatabaseManager.shared.db
+            var statement: OpaquePointer?
+            
+            // Safely unwrap optional values
+            guard let routineId = routineHistory.routineId, let sessionId = routineHistory.id else {
+                log(.error, "Routine ID or Session ID is nil")
+                return false
+            }
+            
+            // Start a transaction
+            guard sqlite3_exec(dm, "BEGIN TRANSACTION", nil, nil, nil) == SQLITE_OK else {
+                let errorMessage = String(cString: sqlite3_errmsg(dm))
+                log(.error, "Failed to begin transaction: \(errorMessage)")
+                return false
+            }
+            
+            defer {
+                if statement != nil {
+                    sqlite3_finalize(statement)
+                }
+            }
+            
+            guard sqlite3_prepare_v2(dm, query, -1, &statement, nil) == SQLITE_OK else {
+                let errorMessage = String(cString: sqlite3_errmsg(dm))
+                log(.error, "Failed to prepare insert statement: \(errorMessage)")
+                return false
+            }
+            
+            // Bind values to the query
+            sqlite3_bind_int(statement, 1, Int32(exercise.id))
+            sqlite3_bind_int(statement, 2, Int32(routineId))
+            sqlite3_bind_int(statement, 3, Int32(sessionId))
+            
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            let dateString = dateFormatter.string(from: Date())
+            sqlite3_bind_text(statement, 4, dateString, -1, nil)
+            
+            sqlite3_bind_int(statement, 5, Int32(set.reps))
+            sqlite3_bind_double(statement, 6, set.weight)
+            
+            // Execute the statement
+            if sqlite3_step(statement) != SQLITE_DONE {
+                let errorMessage = String(cString: sqlite3_errmsg(dm))
+                log(.error, "Failed to insert exercise set: \(errorMessage)")
+                sqlite3_exec(dm, "ROLLBACK", nil, nil, nil)
+                return false
+            }
+            
+            // Commit transaction if successful
+            guard sqlite3_exec(dm, "COMMIT", nil, nil, nil) == SQLITE_OK else {
+                let errorMessage = String(cString: sqlite3_errmsg(dm))
+                log(.error, "Failed to commit transaction: \(errorMessage)")
+                sqlite3_exec(dm, "ROLLBACK", nil, nil, nil)
+                return false
+            }
+            
+            log(.info, "Successfully saved exercise set for exercise_id: \(exercise.id)")
+            return true
+        }
+    }
 
     // Function to fetch a replacement exercise that excludes existing IDs
     func fetchReplacementExercise(exclude existingIDs: Set<Int>) -> ExerciseDto? {
@@ -405,77 +475,167 @@ class DatabaseManager {
         }
     }
     
-    func saveExerciseSet(routineHistory: RoutineHistoryDto, exercise: ExerciseDto, set: SetsDto) -> Bool {
+    func getExercisesFromRoutine(routineId: Int) -> [ExerciseDto] {
         return performDatabaseTask {
             openDatabase()
+            log(.info, "Fetching exercises for routine ID: \(routineId)")
+            var exercises = [ExerciseDto]()
+            
             let query = """
-            INSERT INTO ExerciseHistory (exercise_id, routine_id, routine_session_id, date, reps, weight) 
-            VALUES (?, ?, ?, ?, ?, ?)
+                SELECT Exercises.*
+                FROM Exercises
+                INNER JOIN RoutineExercises ON Exercises.exercise_id = RoutineExercises.exercise_id
+                WHERE RoutineExercises.routine_id = ?;
             """
             
-            let dm = DatabaseManager.shared.db
             var statement: OpaquePointer?
             
-            // Safely unwrap optional values
-            guard let routineId = routineHistory.routineId, let sessionId = routineHistory.id else {
-                log(.error, "Routine ID or Session ID is nil")
-                return false
-            }
-            
-            // Start a transaction
-            guard sqlite3_exec(dm, "BEGIN TRANSACTION", nil, nil, nil) == SQLITE_OK else {
-                let errorMessage = String(cString: sqlite3_errmsg(dm))
-                log(.error, "Failed to begin transaction: \(errorMessage)")
-                return false
-            }
-            
-            defer {
-                if statement != nil {
-                    sqlite3_finalize(statement)
+            // Prepare the SQL query
+            if sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK {
+                // Bind the routine ID to the query
+                sqlite3_bind_int(statement, 1, Int32(routineId))
+                
+                // Iterate over the results
+                while sqlite3_step(statement) == SQLITE_ROW {
+                    let id = Int(sqlite3_column_int(statement, 0))
+                    let name = sqlite3_column_text(statement, 1).flatMap { String(cString: $0) } ?? "Unknown Exercise"
+                    let description = sqlite3_column_text(statement, 2).flatMap { String(cString: $0) }
+                    let level = sqlite3_column_text(statement, 3).flatMap { String(cString: $0) } ?? "Unknown"
+                    let instructions = sqlite3_column_text(statement, 4).flatMap { String(cString: $0) }
+                    let equipmentNeeded = sqlite3_column_int(statement, 5) == 1
+                    let overloading = sqlite3_column_int(statement, 6) == 1
+                    let powerStrengthSupplement = sqlite3_column_text(statement, 7).flatMap { String(cString: $0) } ?? ""
+                    let isolationCompoundAccessory = sqlite3_column_text(statement, 8).flatMap { String(cString: $0) } ?? ""
+                    let pushPullLegs = sqlite3_column_text(statement, 9).flatMap { String(cString: $0) } ?? ""
+                    let verticalHorizontalRotational = sqlite3_column_text(statement, 10).flatMap { String(cString: $0) } ?? ""
+                    let stretch = sqlite3_column_int(statement, 11) == 1
+                    let videoURL = sqlite3_column_text(statement, 12).flatMap { String(cString: $0) }
+                    
+                    // Create an ExerciseDto object and add it to the array
+                    let exercise = ExerciseDto(
+                        id: id,
+                        name: name,
+                        description: description,
+                        level: level,
+                        instructions: instructions,
+                        equipmentNeeded: equipmentNeeded,
+                        overloading: overloading,
+                        powerStrengthSupplement: powerStrengthSupplement,
+                        isolationCompoundAccessory: isolationCompoundAccessory,
+                        pushPullLegs: pushPullLegs,
+                        verticalHorizontalRotational: verticalHorizontalRotational,
+                        stretch: stretch,
+                        videoURL: videoURL
+                    )
+                    exercises.append(exercise)
                 }
+            } else {
+                let errorMessage = String(cString: sqlite3_errmsg(db))
+                log(.error, "Failed to fetch exercises for routine: \(errorMessage)")
             }
             
-            guard sqlite3_prepare_v2(dm, query, -1, &statement, nil) == SQLITE_OK else {
-                let errorMessage = String(cString: sqlite3_errmsg(dm))
-                log(.error, "Failed to prepare insert statement: \(errorMessage)")
-                return false
-            }
-            
-            // Bind values to the query
-            sqlite3_bind_int(statement, 1, Int32(exercise.id))
-            sqlite3_bind_int(statement, 2, Int32(routineId))
-            sqlite3_bind_int(statement, 3, Int32(sessionId))
-            
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-            let dateString = dateFormatter.string(from: Date())
-            sqlite3_bind_text(statement, 4, dateString, -1, nil)
-            
-            sqlite3_bind_int(statement, 5, Int32(set.reps))
-            sqlite3_bind_double(statement, 6, set.weight)
-            
-            // Execute the statement
-            if sqlite3_step(statement) != SQLITE_DONE {
-                let errorMessage = String(cString: sqlite3_errmsg(dm))
-                log(.error, "Failed to insert exercise set: \(errorMessage)")
-                sqlite3_exec(dm, "ROLLBACK", nil, nil, nil)
-                return false
-            }
-            
-            // Commit transaction if successful
-            guard sqlite3_exec(dm, "COMMIT", nil, nil, nil) == SQLITE_OK else {
-                let errorMessage = String(cString: sqlite3_errmsg(dm))
-                log(.error, "Failed to commit transaction: \(errorMessage)")
-                sqlite3_exec(dm, "ROLLBACK", nil, nil, nil)
-                return false
-            }
-            
-            log(.info, "Successfully saved exercise set for exercise_id: \(exercise.id)")
-            return true
+            sqlite3_finalize(statement)
+            log(.info, "Fetched \(exercises.count) exercises for routine ID: \(routineId)")
+            return exercises
         }
     }
+    
+    func getExercisesWithSetsFromRoutine(routineId: Int) -> [ExerciseWithSetsDto] {
+        let exercises = getExercisesFromRoutine(routineId: routineId)
+        return performDatabaseTask {
+            openDatabase()
+            log(.info, "Getting exercises and sets from routine: \(routineId)")
+            
+            var exercisesWithSets = [ExerciseWithSetsDto]()
+            
+            for exercise in exercises {
+                let sets = getSetsFromExercise(exerciseId: exercise.id)
+                exercisesWithSets.append(ExerciseWithSetsDto(exercise: exercise, sets: sets))
+            }
+            
+            log(.info, "Fetched \(exercisesWithSets.count) exercises with sets for routine ID: \(routineId)")
+            return exercisesWithSets
+        }
+    }
+    
+    func getExerciseHistory(exerciseId: Int) -> [ExerciseHistoryDto] {
+        return performDatabaseTask {
+            openDatabase()
+            log(.info, "Getting exercise history for exercise ID: \(exerciseId)")
+            
+            var exerciseHistoryDict: [Int: ExerciseHistoryDto] = [:]
+            var statement: OpaquePointer?
 
+            let query = """
+            SELECT id, exercise_id, routine_id, routine_history_id, date, reps, weight, notes
+            FROM ExerciseHistory
+            WHERE exercise_id = ?
+            ORDER BY date DESC;
+            """
 
+            let prepareResult = sqlite3_prepare_v2(db, query, -1, &statement, nil)
+            if prepareResult != SQLITE_OK {
+                log(.error, "Error preparing statement: \(String(cString: sqlite3_errmsg(db)))")
+                return []
+            }
+
+            defer { sqlite3_finalize(statement) }
+
+            sqlite3_bind_int(statement, 1, Int32(exerciseId))
+
+            let formatter = ISO8601DateFormatter()
+
+            while sqlite3_step(statement) == SQLITE_ROW {
+                let id = Int(sqlite3_column_int(statement, 0))
+                let routineId = Int(sqlite3_column_int(statement, 2))
+                let routineSessionId = Int(sqlite3_column_int(statement, 3))
+
+                var date: Date?
+                if let dateText = sqlite3_column_text(statement, 4) {
+                    let dateString = String(cString: dateText)
+                    date = formatter.date(from: dateString)
+                }
+
+                let reps = Int(sqlite3_column_int(statement, 5))
+                let weight = sqlite3_column_double(statement, 6)
+
+                var notes: String? = nil
+                if let notesText = sqlite3_column_text(statement, 7) {
+                    notes = String(cString: notesText)
+                }
+
+                // Check if an entry for this exercise session already exists
+                if var exerciseEntry = exerciseHistoryDict[id] {
+                    // Add a new set to the existing session
+                    let set = SetsDto(setNumber: exerciseEntry.sets.count + 1, reps: reps, weight: weight)
+                    exerciseEntry.sets.append(set)
+                    exerciseHistoryDict[id] = exerciseEntry
+                } else {
+                    // Create a new exercise session entry
+                    let exerciseEntry = ExerciseHistoryDto(
+                        id: id,
+                        exerciseId: exerciseId,
+                        routineId: routineId,
+                        routineHistoryId: routineSessionId,
+                        date: date ?? Date(),
+                        sets: [SetsDto(setNumber: 1, reps: reps, weight: weight)], // First set
+                        notes: notes
+                    )
+                    exerciseHistoryDict[id] = exerciseEntry
+                }
+            }
+
+            let exerciseHistory = Array(exerciseHistoryDict.values)
+
+            if exerciseHistory.isEmpty {
+                log(.warning, "No exercise history found for exercise ID: \(exerciseId)")
+            } else {
+                log(.info, "Retrieved \(exerciseHistory.count) exercise history records.")
+            }
+
+            return exerciseHistory
+        }
+    }
     
     func saveRoutineWithExercisesToDb(_ routine: RoutineDto) -> Bool {
         return performDatabaseTask {
@@ -886,24 +1046,6 @@ class DatabaseManager {
             return nil
         }
     }
-
-    func getExercisesWithSetsFromRoutine(routineId: Int) -> [ExerciseWithSetsDto] {
-        let exercises = getExercisesFromRoutine(routineId: routineId)
-        return performDatabaseTask {
-            openDatabase()
-            log(.info, "Getting exercises and sets from routine: \(routineId)")
-            
-            var exercisesWithSets = [ExerciseWithSetsDto]()
-            
-            for exercise in exercises {
-                let sets = getSetsFromExercise(exerciseId: exercise.id)
-                exercisesWithSets.append(ExerciseWithSetsDto(exercise: exercise, sets: sets))
-            }
-            
-            log(.info, "Fetched \(exercisesWithSets.count) exercises with sets for routine ID: \(routineId)")
-            return exercisesWithSets
-        }
-    }
     
     func getSetsFromExercise(exerciseId: Int) -> [SetsDto] {
         openDatabase()
@@ -971,71 +1113,6 @@ class DatabaseManager {
         }
     }
     
-    func getExercisesFromRoutine(routineId: Int) -> [ExerciseDto] {
-        return performDatabaseTask {
-            openDatabase()
-            log(.info, "Fetching exercises for routine ID: \(routineId)")
-            var exercises = [ExerciseDto]()
-            
-            let query = """
-                SELECT Exercises.*
-                FROM Exercises
-                INNER JOIN RoutineExercises ON Exercises.exercise_id = RoutineExercises.exercise_id
-                WHERE RoutineExercises.routine_id = ?;
-            """
-            
-            var statement: OpaquePointer?
-            
-            // Prepare the SQL query
-            if sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK {
-                // Bind the routine ID to the query
-                sqlite3_bind_int(statement, 1, Int32(routineId))
-                
-                // Iterate over the results
-                while sqlite3_step(statement) == SQLITE_ROW {
-                    let id = Int(sqlite3_column_int(statement, 0))
-                    let name = sqlite3_column_text(statement, 1).flatMap { String(cString: $0) } ?? "Unknown Exercise"
-                    let description = sqlite3_column_text(statement, 2).flatMap { String(cString: $0) }
-                    let level = sqlite3_column_text(statement, 3).flatMap { String(cString: $0) } ?? "Unknown"
-                    let instructions = sqlite3_column_text(statement, 4).flatMap { String(cString: $0) }
-                    let equipmentNeeded = sqlite3_column_int(statement, 5) == 1
-                    let overloading = sqlite3_column_int(statement, 6) == 1
-                    let powerStrengthSupplement = sqlite3_column_text(statement, 7).flatMap { String(cString: $0) } ?? ""
-                    let isolationCompoundAccessory = sqlite3_column_text(statement, 8).flatMap { String(cString: $0) } ?? ""
-                    let pushPullLegs = sqlite3_column_text(statement, 9).flatMap { String(cString: $0) } ?? ""
-                    let verticalHorizontalRotational = sqlite3_column_text(statement, 10).flatMap { String(cString: $0) } ?? ""
-                    let stretch = sqlite3_column_int(statement, 11) == 1
-                    let videoURL = sqlite3_column_text(statement, 12).flatMap { String(cString: $0) }
-                    
-                    // Create an ExerciseDto object and add it to the array
-                    let exercise = ExerciseDto(
-                        id: id,
-                        name: name,
-                        description: description,
-                        level: level,
-                        instructions: instructions,
-                        equipmentNeeded: equipmentNeeded,
-                        overloading: overloading,
-                        powerStrengthSupplement: powerStrengthSupplement,
-                        isolationCompoundAccessory: isolationCompoundAccessory,
-                        pushPullLegs: pushPullLegs,
-                        verticalHorizontalRotational: verticalHorizontalRotational,
-                        stretch: stretch,
-                        videoURL: videoURL
-                    )
-                    exercises.append(exercise)
-                }
-            } else {
-                let errorMessage = String(cString: sqlite3_errmsg(db))
-                log(.error, "Failed to fetch exercises for routine: \(errorMessage)")
-            }
-            
-            sqlite3_finalize(statement)
-            log(.info, "Fetched \(exercises.count) exercises for routine ID: \(routineId)")
-            return exercises
-        }
-    }
-    
     func getRoutineHistory(routineId: Int) -> [RoutineHistoryDto] {
         return performDatabaseTask {
             openDatabase()
@@ -1055,7 +1132,7 @@ class DatabaseManager {
                 return []
             }
             
-            defer { sqlite3_finalize(statement) } // Ensure the statement is finalized
+            defer { sqlite3_finalize(statement) }
             
             // Bind the routine ID to the statement
             sqlite3_bind_int(statement, 1, Int32(routineId))
@@ -1094,7 +1171,6 @@ class DatabaseManager {
         }
     }
 
-    
     func deleteRoutine(routine: RoutineDto) -> Bool {
         return performDatabaseTask {
             openDatabase() // Ensure the database is open
@@ -1442,13 +1518,6 @@ class DatabaseManager {
                 log(.error, "Failed to prepare delete statement for table \(table): \(String(cString: sqlite3_errmsg(db)))")
             }
             sqlite3_finalize(statement)
-        }
-    }
-    
-    func startRoutine(routine: RoutineDto) {
-        return performDatabaseTask {
-            openDatabase()
-            
         }
     }
     

@@ -68,14 +68,14 @@ final class DatabaseManagerTest: XCTestCase {
         XCTAssertGreaterThan(exercises.count, 0, "Exercises count should be greater than zero")
     }
     
-    func testSaveExerciseSet() throws {        
+    func testSaveExerciseSet() throws {
         // Create a mock routine session, exercise, and set
         let routineSession = RoutineHistoryDto(id: 1, routineId: 1)
-        let exercise = ExerciseDto(id: 101, name: "Bench Press", description: nil, level: nil,
-                                   instructions: nil, equipmentNeeded: nil, overloading: nil,
-                                   powerStrengthSupplement: nil, isolationCompoundAccessory: nil,
-                                   pushPullLegs: nil, verticalHorizontalRotational: nil,
-                                   stretch: nil, videoURL: nil)
+        let exercise = ExerciseDto(id: 101, name: "Bench Press", description: nil,
+                                   level: nil, instructions: nil, equipmentNeeded: nil,
+                                   overloading: nil, powerStrengthSupplement: nil,
+                                   isolationCompoundAccessory: nil, pushPullLegs: nil,
+                                   verticalHorizontalRotational: nil, stretch: nil, videoURL: nil)
         let set = SetsDto(setNumber: 1, reps: 10, weight: 135.0)
         
         // Act: Call the function to insert data
@@ -84,44 +84,28 @@ final class DatabaseManagerTest: XCTestCase {
         // Assert: Ensure the function returns true
         XCTAssertTrue(result, "saveExerciseSet should return true on successful insertion")
         
-        // Verify: Check if the data was correctly inserted
-        let db = DatabaseManager.shared.db
-        let query = "SELECT exercise_id, routine_id, routine_session_id, reps, weight FROM ExerciseHistory WHERE exercise_id = ?"
-        var statement: OpaquePointer?
+        // Fetch the inserted data using `getExerciseHistory`
+        let historyEntries = DatabaseManager.shared.getExerciseHistory(exerciseId: exercise.id)
         
-        guard sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK else {
-            XCTFail("Failed to prepare query statement")
-            return
-        }
+        // Verify that at least one entry is found
+        XCTAssertFalse(historyEntries.isEmpty, "No data found in ExerciseHistory table")
         
-        sqlite3_bind_int(statement, 1, Int32(exercise.id))
-        
-        var fetchedExerciseId: Int32 = 0
-        var fetchedRoutineId: Int32 = 0
-        var fetchedSessionId: Int32 = 0
-        var fetchedReps: Int32 = 0
-        var fetchedWeight: Double = 0.0
-        
-        if sqlite3_step(statement) == SQLITE_ROW {
-            fetchedExerciseId = sqlite3_column_int(statement, 0)
-            fetchedRoutineId = sqlite3_column_int(statement, 1)
-            fetchedSessionId = sqlite3_column_int(statement, 2)
-            fetchedReps = sqlite3_column_int(statement, 3)
-            fetchedWeight = sqlite3_column_double(statement, 4)
-        } else {
-            XCTFail("No data found in ExerciseHistory table")
-        }
-        
-        sqlite3_finalize(statement)
-        
-        // Assertions to confirm the values were stored correctly
-        XCTAssertEqual(fetchedExerciseId, Int32(exercise.id), "Exercise ID does not match")
-        XCTAssertEqual(fetchedRoutineId, Int32(routineSession.routineId!), "Routine ID does not match")
-        XCTAssertEqual(fetchedSessionId, Int32(routineSession.id!), "Routine Session ID does not match")
-        XCTAssertEqual(fetchedReps, Int32(set.reps), "Reps value does not match")
-        XCTAssertEqual(fetchedWeight, set.weight, "Weight value does not match")
-    }
+        // Extract the first result (assuming only one entry was added)
+        if let entry = historyEntries.first {
+            XCTAssertEqual(entry.exerciseId, exercise.id, "Exercise ID does not match")
+            XCTAssertEqual(entry.routineId, routineSession.routineId, "Routine ID does not match")
+            XCTAssertEqual(entry.routineHistoryId, routineSession.id, "Routine Session ID does not match")
 
+            // Since `getExerciseHistory` groups sets under a single session, ensure the set exists
+            XCTAssertFalse(entry.sets.isEmpty, "No sets found in exercise history")
+            if let savedSet = entry.sets.first {
+                XCTAssertEqual(savedSet.reps, set.reps, "Reps value does not match")
+                XCTAssertEqual(savedSet.weight, set.weight, "Weight value does not match")
+            }
+        } else {
+            XCTFail("Failed to retrieve saved exercise set data")
+        }
+    }
     
     /*
      Routine Tests

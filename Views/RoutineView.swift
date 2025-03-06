@@ -10,6 +10,7 @@ import SwiftUI
 struct RoutineView: View {
     var routine: RoutineDto
 
+    @ObservedObject var viewModel: RoutineViewModel
     @State private var pastSessions: [RoutineHistoryDto] = []
     @State private var isStarted = false
     @State private var elapsedTime = 0
@@ -43,7 +44,7 @@ struct RoutineView: View {
                 .padding()
                 .navigationTitle("Workout Routine")
                 .onAppear {
-                    mockLoadRoutineHistory()
+                    loadRoutineHistory()
                 }
             }
             startFinishButton
@@ -61,7 +62,7 @@ struct RoutineView: View {
     }
     
     private var stopwatchView: some View {
-        Text("Time: \(formattedTime(elapsedTime))") // ✅ Pass elapsedTime to the function
+        Text("Time: \(formattedTime(elapsedTime))")
             .font(.headline)
             .foregroundColor(.black)
             .frame(maxWidth: .infinity, alignment: .center)
@@ -146,17 +147,17 @@ struct RoutineView: View {
 
     // MARK: - Helpers
     private func loadRoutineHistory() {
-        
+        pastSessions = viewModel.getRoutineHistory(routineId: routine.id)
     }
     
     private func mockLoadRoutineHistory() {
         // TODO: Replace with actual database fetch logic
-        self.pastSessions = [
-            RoutineHistoryDto(id: 1, routineId: routine.id, userId: 1, date: Date().addingTimeInterval(-86400),
-                              duration: 5200, difficulty: 3, caloriesBurnt: 350, notes: "Felt strong today"),
-            RoutineHistoryDto(id: 2, routineId: routine.id, userId: 1, date: Date().addingTimeInterval(-172800),
-                              duration: 3400, difficulty: 4, caloriesBurnt: 400, notes: "Increased weights")
-        ]
+//        self.pastSessions = [
+//            RoutineHistoryDto(id: 1, routineId: routine.id, userId: 1, date: Date().addingTimeInterval(-86400),
+//                              duration: 5200, difficulty: 3, caloriesBurnt: 350, notes: "Felt strong today"),
+//            RoutineHistoryDto(id: 2, routineId: routine.id, userId: 1, date: Date().addingTimeInterval(-172800),
+//                              duration: 3400, difficulty: 4, caloriesBurnt: 400, notes: "Increased weights")
+//        ]
     }
 
 
@@ -208,19 +209,6 @@ struct ExpandedProgressHistoryView: View {
                     }
                     
                 }
-//                ForEach(pastSessions) { session in
-//                    VStack(alignment: .leading) {
-//                        Text("Workout on \(session.date?.formatted() ?? "Unknown Date")")
-//                            .font(.headline)
-//                        Text("Duration: \(formattedTime(Int(session.duration ?? 0)))")
-//                        Text("Calories Burnt: \(session.caloritesBurnt ?? 0)")
-//                        Text("Notes: \(session.notes ?? "No notes")")
-//                    }
-//                    .padding()
-//                    .background(Color.white)
-//                    .cornerRadius(10)
-//                    .shadow(radius: 2)
-//                }
             }
         }
         .padding(.top, 5)
@@ -351,7 +339,7 @@ struct ExpandedProgressHistoryView: View {
                 ]
             )
         ]
-    ))
+    ), viewModel: RoutineViewModel())
 }
 
 

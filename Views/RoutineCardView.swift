@@ -39,7 +39,7 @@ struct RoutineCardView: View {
 
                 Spacer()
 
-                NavigationLink(destination: RoutineView(routine: routine)) {
+                NavigationLink(destination: RoutineView(routine: routine, viewModel: viewModel)) {
                     Text("Start \(routine.name)")
                         .fontWeight(.semibold)
                         .foregroundColor(AppColors.light)

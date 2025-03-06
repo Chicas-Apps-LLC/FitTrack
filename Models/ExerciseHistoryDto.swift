@@ -10,6 +10,7 @@ struct ExerciseHistoryDto: Identifiable {
     var id: Int
     var exerciseId: Int
     var routineId: Int
+    var routineHistoryId: Int
     var date: Date
     var sets: [SetsDto]
     var notes: String?

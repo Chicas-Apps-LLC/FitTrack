@@ -125,6 +125,7 @@ struct ExerciseView: View {
             ProgressSection(exerciseHistory: exerciseHistory)
                 .onAppear {
                     mockLoadExerciseHistory()
+                    loadExerciseHistory()
                 }
 
             Spacer()
@@ -154,6 +155,7 @@ struct ExerciseView: View {
     private func loadExerciseHistory() {
         
     }
+    
     private func mockLoadExerciseHistory() {
         // Simulating data fetch (replace with real database call)
         let sampleHistory = [
@@ -161,6 +163,7 @@ struct ExerciseView: View {
                 id: 1,
                 exerciseId: exercise.id,
                 routineId: routine.id,
+                routineHistoryId: 999,
                 date: Date().addingTimeInterval(-86400),
                 sets: [
                     SetsDto(setNumber: 1, reps: 10, weight: 50),
@@ -171,6 +174,7 @@ struct ExerciseView: View {
                 id: 2,
                 exerciseId: exercise.id,
                 routineId: routine.id,
+                routineHistoryId: 1234,
                 date: Date().addingTimeInterval(-172800),
                 sets: [
                     SetsDto(setNumber: 1, reps: 9, weight: 55),
