@@ -151,13 +151,12 @@ struct RoutineView: View {
     }
     
     private func mockLoadRoutineHistory() {
-        // TODO: Replace with actual database fetch logic
-//        self.pastSessions = [
-//            RoutineHistoryDto(id: 1, routineId: routine.id, userId: 1, date: Date().addingTimeInterval(-86400),
-//                              duration: 5200, difficulty: 3, caloriesBurnt: 350, notes: "Felt strong today"),
-//            RoutineHistoryDto(id: 2, routineId: routine.id, userId: 1, date: Date().addingTimeInterval(-172800),
-//                              duration: 3400, difficulty: 4, caloriesBurnt: 400, notes: "Increased weights")
-//        ]
+        self.pastSessions = [
+            RoutineHistoryDto(id: 1, routineId: routine.id, userId: 1, date: Date().addingTimeInterval(-86400),
+                              duration: 5200, difficulty: 3, caloriesBurnt: 350, notes: "Felt strong today"),
+            RoutineHistoryDto(id: 2, routineId: routine.id, userId: 1, date: Date().addingTimeInterval(-172800),
+                              duration: 3400, difficulty: 4, caloriesBurnt: 400, notes: "Increased weights")
+        ]
     }
 
 

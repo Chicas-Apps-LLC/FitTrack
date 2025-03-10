@@ -976,6 +976,33 @@ class DatabaseManager {
         }
     }
     
+    func addDayToRoutine(day: Int, routineId: Int) {
+        guard (1...7).contains(day) else {
+            print("Error: Invalid day. Must be between 1 (Sunday) and 7 (Saturday).")
+            return
+        }
+        performDatabaseTask {
+            openDatabase()
+            
+            let query = "INSERT INTO RoutineSchedule (routine_id, day_of_week) VALUES (?, ?);"
+            
+            var statement: OpaquePointer?
+            
+            if sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK {
+                sqlite3_bind_int(statement, 1, Int32(routineId))
+                sqlite3_bind_int(statement, 2, Int32(day))
+                
+                if sqlite3_step(statement) == SQLITE_DONE {
+                    print("Successfully added routine to day \(day).")
+                } else {
+                    print("Error inserting data.")
+                }
+            }
+            sqlite3_finalize(statement)
+            closeDatabase()
+        }
+    }
+
     func fetchAllRoutines() -> [RoutineDto] {
         return performDatabaseTask {
             openDatabase()
@@ -1005,6 +1032,48 @@ class DatabaseManager {
         }
     }
 
+    func getRoutineById(id: Int) -> RoutineDto? {
+        return performDatabaseTask {
+            openDatabase()
+            let query = "SELECT * FROM Routines WHERE routine_id = ?;"
+            var statement: OpaquePointer?
+            
+            guard sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK else {
+                let errorMessage = String(cString: sqlite3_errmsg(db))
+                log(.error, "Failed to prepare routine query: \(errorMessage)")
+                return RoutineDto(
+                    id: 0,
+                    name: "None",
+                    description: "None",
+                    exerciseWithSetsDto: nil
+                )
+            }
+            
+            defer { sqlite3_finalize(statement) }
+
+            // Bind values
+            sqlite3_bind_int(statement, 1, Int32(id))
+
+            if sqlite3_step(statement) == SQLITE_ROW {
+                let routineId = sqlite3_column_int(statement, 0)
+                let routineName = String(cString: sqlite3_column_text(statement, 1))
+                let routineDescription = sqlite3_column_text(statement, 2).flatMap { String(cString: $0) }
+
+                log(.info, "Routine retrieved successfully: \(routineName)")
+                return RoutineDto(
+                    id: Int(routineId),
+                    name: routineName,
+                    description: routineDescription,
+                    exerciseWithSetsDto: nil
+                )
+            } else {
+                log(.warning, "No routine found with id \(id)")
+            }
+
+            return nil
+        }
+    }
+    
     func getRoutineByName(_ name: String) -> RoutineDto? {
         return performDatabaseTask {
             openDatabase()
@@ -1169,6 +1238,63 @@ class DatabaseManager {
             }
             return routineSessions
         }
+    }
+    
+    func getDaysForRoutine(routineId: Int) -> [Int] {
+        var days: [Int] = []
+        
+        performDatabaseTask {
+            openDatabase()
+            
+            let query = "SELECT day_of_week FROM RoutineSchedule WHERE routine_id = ?;"
+            var statement: OpaquePointer?
+            
+            if sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK {
+                sqlite3_bind_int(statement, 1, Int32(routineId))
+                
+                while sqlite3_step(statement) == SQLITE_ROW {
+                    let day = Int(sqlite3_column_int(statement, 0))
+                    days.append(day)
+                }
+            } else {
+                log(.error, "Error preparing statement: \(String(cString: sqlite3_errmsg(db)))")
+            }
+            
+            sqlite3_finalize(statement)
+            closeDatabase()
+        }        
+        return days
+    }
+    
+    func getRoutinesForDay(day: Int) -> [Int] {
+        var routines: [Int] = []
+
+        performDatabaseTask {
+            openDatabase()
+            
+            let query = """
+            SELECT routine_id
+            FROM RoutineSchedule
+            WHERE day_of_week = ?;
+            """
+            
+            var statement: OpaquePointer?
+            
+            if sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK {
+                sqlite3_bind_int(statement, 1, Int32(day))
+                
+                while sqlite3_step(statement) == SQLITE_ROW {
+                    let routineId = Int(sqlite3_column_int(statement, 0))
+                    routines.append(routineId)
+                }
+            } else {
+                log(.error, "Error preparing statement: \(String(cString: sqlite3_errmsg(db)))")
+            }
+            
+            sqlite3_finalize(statement)
+            closeDatabase()
+        }
+        return routines
     }
 
     func deleteRoutine(routine: RoutineDto) -> Bool {

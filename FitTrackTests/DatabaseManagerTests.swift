@@ -306,7 +306,28 @@ final class DatabaseManagerTest: XCTestCase {
             XCTAssertFalse(((routine.exerciseWithSetsDto?.isEmpty) != nil), "Routine \(routine.name) is empty")
         }
     }
+    
+    func testRoutineSchedule() throws {
+        let routineId = 98765
+        let daysToAdd = [1, 3, 5] // Sunday, Tuesday, Thursday
 
+        let secondRoutine = 2
+        let secondDay = 3
+        // Add the days to the routine
+        for day in daysToAdd {
+            DatabaseManager.shared.addDayToRoutine(day: day, routineId: routineId)
+        }
+
+        DatabaseManager.shared.addDayToRoutine(day: secondDay, routineId: secondRoutine)
+        
+        // Fetch the scheduled days
+        let scheduledDays = DatabaseManager.shared.getDaysForRoutine(routineId: routineId)
+
+        // Verify that the retrieved days match the expected days
+        XCTAssertEqual(Set(scheduledDays), Set(daysToAdd), "The scheduled days do not match the expected days.")
+        XCTAssertEqual(2, DatabaseManager.shared.getRoutinesForDay(day: 3).count)
+    }
+    
     /*
      User Tests
      */

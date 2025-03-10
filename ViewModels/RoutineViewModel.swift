@@ -107,11 +107,23 @@ final class RoutineViewModel: ObservableObject {
     }
     
     func getRoutineHistory(routineId: Int) -> [RoutineHistoryDto] {
-        dm.getRoutineHistory(routineId: routineId)
+        return dm.getRoutineHistory(routineId: routineId)
     }
     
     func getRoutineHistoryFromDb(routineId: Int) -> [RoutineHistoryDto] {
         return dm.getRoutineHistory(routineId: routineId)
     }
     
+    func getRoutinesForDay(day: Int) -> [RoutineDto] {
+        let routineIds = dm.getRoutinesForDay(day: day)
+        
+        var routines: [RoutineDto] = []
+        
+        for id in routineIds {
+            if let routine = dm.getRoutineById(id: id) {
+                routines.append(routine)
+            }
+        }
+        return routines
+    }
 }

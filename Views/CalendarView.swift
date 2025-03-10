@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CalendarView: View {
     @State private var currentDate = Date()
+    @ObservedObject var routineViewModel: RoutineViewModel
 
     private var calendar: Calendar {
         Calendar.current
@@ -72,17 +73,28 @@ struct CalendarView: View {
     private var calendarGrid: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 10) {
             // Empty slots for the first week offset
-            ForEach(0..<firstDayOfWeekOffset, id: \..self) { _ in
+            ForEach(0..<firstDayOfWeekOffset, id: \.self) { _ in
                 Color.clear
                     .frame(height: 40)
             }
             // Days of the current month
-            ForEach(currentMonthDays, id: \..self) { date in
+            ForEach(currentMonthDays, id: \.self) { date in
+                let isToday = calendar.isDate(date, inSameDayAs: Date())
+                let hasRoutine = hasRoutineForDate(date)
+                
                 Text("\(calendar.component(.day, from: date))")
                     .font(.subheadline)
                     .frame(maxWidth: .infinity, minHeight: 40)
-                    .background(AppColors.primary.opacity(0.2))
+                    .background(isToday ? AppColors.primary : AppColors.primary.opacity(0.2))
+                    .foregroundColor(isToday ? .white : .primary)
                     .cornerRadius(8)
+                    .shadow(color: isToday ? Color.black.opacity(0.3) : Color.clear, radius: 5)
+                
+                if hasRoutine {
+                    Circle()
+                        .fill(AppColors.night)
+                        .frame(width: 6, height: 6)
+                }
             }
         }
     }
@@ -98,11 +110,19 @@ struct CalendarView: View {
         formatter.dateFormat = "MMMM yyyy"
         return formatter.string(from: date)
     }
+    
+    private func getWeekdayIndex(from date: Date) -> Int {
+        return calendar.component(.weekday, from: date)
+    }
+    
+    private func hasRoutineForDate(_ date: Date) -> Bool {
+        let weekdayIndex = getWeekdayIndex(from: date)
+        return !routineViewModel.getRoutinesForDay(day: weekdayIndex).isEmpty
+    }
 }
 
 struct CalendarView_Previews: PreviewProvider {
     static var previews: some View {
-        CalendarView()
+        CalendarView(routineViewModel: RoutineViewModel())
     }
 }
-

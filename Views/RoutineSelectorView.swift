@@ -25,6 +25,13 @@ struct RoutineSelectorView: View {
 
                 VStack(spacing: 20) {
                     HStack {
+                        NavigationLink(destination: CalendarView(routineViewModel: routineViewModel)) {
+                            Image(systemName: "calendar")
+                                .resizable()
+                                .frame(width: 40, height: 40)
+                                .foregroundColor(AppColors.light)
+                                .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 2)
+                        }
                         Spacer()
                         NavigationLink(
                             destination: UserProfileView(user: userViewModel.user ?? placeholderUser)
@@ -105,11 +112,10 @@ struct RoutineSelectorView: View {
 struct RoutineSelectorView_Previews: PreviewProvider {
     static var previews: some View {
         RoutineSelectorView()
-            .environmentObject(mockUserViewModel) // Inject mock user data
-            .environmentObject(mockRoutineViewModel) // Inject mock routines
+            .environmentObject(mockUserViewModel)
+            .environmentObject(mockRoutineViewModel)
     }
     
-    // Mock UserViewModel
     static var mockUserViewModel: UserViewModel {
         let userViewModel = UserViewModel()
         let mockUser = UserDto(userId: 1, name: "John Doe", username: "johndoe", email: "johndoe@example.com", createdAt: "01/01/2025", profilePictureUrl: nil, startingPicture: nil, progressPicture: nil, subscriptionId: nil)
