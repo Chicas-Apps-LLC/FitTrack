@@ -44,7 +44,8 @@ struct RoutineView: View {
                 .padding()
                 .navigationTitle("Workout Routine")
                 .onAppear {
-                    loadRoutineHistory()
+                   // loadRoutineHistory()
+                    mockLoadRoutineHistory()
                 }
             }
             startFinishButton

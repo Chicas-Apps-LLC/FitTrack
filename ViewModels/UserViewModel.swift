@@ -18,7 +18,8 @@ final class UserViewModel: ObservableObject {
     @Published var validationErrors: [String] = []
     
     func isSetupComplete() -> Bool {
-        return userNameFilled && userStatsFilled && userGoalsFilled
+        log(.info, "the user is currently: \(String(describing: user?.name))")
+        return self.user?.name != nil
     }
     
     func loadFirstUser() {
@@ -33,11 +34,7 @@ final class UserViewModel: ObservableObject {
             self.name = ""
         }
     }
-    
-    func getFirstUser() {
-        
-    }
-    
+
     func loadUserByName() {
         log(.info, "Fetching user by name: \(name)")
         self.user = DatabaseManager.shared.getUserByName(name: name)

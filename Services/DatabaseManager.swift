@@ -768,24 +768,28 @@ class DatabaseManager {
         var routines = [RoutineDto]()
         if let days = days {
             for _ in 0..<days {
-                if user.currentStats.gymMembership == false {
+                if user.currentStats.gymMembership != true {
                     log(.info, "No gym membership, creating bodyweight routines")
                     routines.append(createBodyWeightRoutines(user: user))
                 }
-                else if user.goals.goalExercise?.lowercased() == "cardio" {
-                    log(.info, "Creating cardio routines")
-                    routines = createCardioRoutines(user: user)
-                    break;
-                }
-                else if user.goals.goalExercise?.lowercased() == "strength" {
-                    log(.info, "Creating strength routines")
-                    routines = createStrengthRoutines(user: user)
-                    break;
-                }
-                else if user.goals.goalExercise?.lowercased() == "weight loss" {
-                    log(.info, "Creating weight loss routines")
-                    createWeightLossRoutines(user: user)
-                    break;
+                else {
+                    log(.info, "Gym membership available, creating routines")
+                    
+                    if user.goals.goalExercise?.lowercased() == "cardio" {
+                        log(.info, "Creating cardio routines")
+                        routines = createCardioRoutines(user: user)
+                        break;
+                    }
+                    else if user.goals.goalExercise?.lowercased() == "strength" {
+                        log(.info, "Creating strength routines")
+                        routines = createStrengthRoutines(user: user)
+                        break;
+                    }
+                    else if user.goals.goalExercise?.lowercased() == "weight loss" {
+                        log(.info, "Creating weight loss routines")
+                        createWeightLossRoutines(user: user)
+                        break;
+                    }
                 }
             }
         }
@@ -1208,7 +1212,7 @@ class DatabaseManager {
             
             // Execute the query and iterate through results
             while sqlite3_step(statement) == SQLITE_ROW {
-                let session = RoutineHistoryDto()
+                var session = RoutineHistoryDto()
                 
                 session.id = Int(sqlite3_column_int(statement, 0))
                 session.routineId = Int(sqlite3_column_int(statement, 1))

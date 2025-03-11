@@ -11,6 +11,7 @@
 		C33454922D13BA6E00D2DDD7 /* DatabaseManagerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C33454912D13BA6600D2DDD7 /* DatabaseManagerHelper.swift */; };
 		C341B74C2D29D74B00E62D88 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = C341B74B2D29D74B00E62D88 /* Logging */; };
 		C347B4322CB474C400C1D46D /* EditRoutineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C347B4312CB474C400C1D46D /* EditRoutineView.swift */; };
+		C353D5522D7FE88E00B7680B /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C353D5512D7FE88E00B7680B /* RootView.swift */; };
 		C36583172CA5B62A00CD41A7 /* FitTrackApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C36583162CA5B62A00CD41A7 /* FitTrackApp.swift */; };
 		C36583192CA5B62A00CD41A7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C36583182CA5B62A00CD41A7 /* ContentView.swift */; };
 		C365831B2CA5B62B00CD41A7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C365831A2CA5B62B00CD41A7 /* Assets.xcassets */; };
@@ -44,6 +45,7 @@
 		C334548D2D13698200D2DDD7 /* DatabaseManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManagerTests.swift; sourceTree = "<group>"; };
 		C33454912D13BA6600D2DDD7 /* DatabaseManagerHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManagerHelper.swift; sourceTree = "<group>"; };
 		C347B4312CB474C400C1D46D /* EditRoutineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditRoutineView.swift; sourceTree = "<group>"; };
+		C353D5512D7FE88E00B7680B /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		C36583132CA5B62A00CD41A7 /* FitTrack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FitTrack.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C36583162CA5B62A00CD41A7 /* FitTrackApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitTrackApp.swift; sourceTree = "<group>"; };
 		C36583182CA5B62A00CD41A7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -137,6 +139,7 @@
 				C365831A2CA5B62B00CD41A7 /* Assets.xcassets */,
 				C365831C2CA5B62B00CD41A7 /* Preview Content */,
 				C347B4312CB474C400C1D46D /* EditRoutineView.swift */,
+				C353D5512D7FE88E00B7680B /* RootView.swift */,
 			);
 			path = FitTrack;
 			sourceTree = "<group>";
@@ -320,6 +323,7 @@
 				C3EB4B752CDDDE6000989EDD /* NavigationDestination.swift in Sources */,
 				C3CD5A5E2CC8473E00122A3D /* DatabaseManager.swift in Sources */,
 				C365834B2CA60B5900CD41A7 /* OurRecommendationsView.swift in Sources */,
+				C353D5522D7FE88E00B7680B /* RootView.swift in Sources */,
 				C36583192CA5B62A00CD41A7 /* ContentView.swift in Sources */,
 				C36583172CA5B62A00CD41A7 /* FitTrackApp.swift in Sources */,
 				C33454922D13BA6E00D2DDD7 /* DatabaseManagerHelper.swift in Sources */,

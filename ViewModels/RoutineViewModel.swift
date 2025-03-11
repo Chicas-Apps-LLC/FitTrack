@@ -11,7 +11,6 @@ import Foundation
 final class RoutineViewModel: ObservableObject {
     @Published var routines: [RoutineDto] = []
     @Published var currentRoutine: RoutineDto?
-    @Published var routineCreationSuccess: Bool = false
     @Published var isLoading = true
     
     private let dm = DatabaseManager.shared
@@ -29,9 +28,7 @@ final class RoutineViewModel: ObservableObject {
         
         let routine = dm.createGeneratedRoutine(name: routineName, user: user)
         let success = dm.saveRoutineWithExercisesToDb(routine)
-        
-        routineCreationSuccess = success
-        
+                
         if success {
             log(.info, "Routine created and saved successfully.")
             loadAllRoutines()
@@ -64,7 +61,6 @@ final class RoutineViewModel: ObservableObject {
             
             // Save routine
             let success = dm.saveRoutineWithExercisesToDb(routine)
-            routineCreationSuccess = success
             
             if success {
                 log(.info, "Routine '\(routineName)' created and saved successfully.")
@@ -77,6 +73,12 @@ final class RoutineViewModel: ObservableObject {
         loadAllRoutines()
     }
 
+    func createRoutinesBasedOnGoal(user: UserDto) {
+        log(.info, "Creating routines based on \(user.name)'s goals...")
+        
+        dm.chooseAndCreateRoutines(user: user)
+        
+    }
     func loadAllRoutines() {
         DispatchQueue.global(qos: .background).async {
             let allRoutines = DatabaseManager.shared.fetchAllRoutines()

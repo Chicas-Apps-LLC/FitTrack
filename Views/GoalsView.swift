@@ -149,7 +149,7 @@ struct GoalsView: View {
                                 log(.error, "Failed to save user goals.")
                             }
                             // Trigger routine generation
-                            viewModel.createAndSaveGeneratedRoutines(user: userViewModel.user ?? UserDto(userId: 999, name: "JoeShmoe"))
+                            viewModel.createRoutinesBasedOnGoal(user: userViewModel.user ?? UserDto(userId: 999, name: "JoeShmoe"))
                         }
                     }
                 )
