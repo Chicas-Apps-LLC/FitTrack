@@ -75,7 +75,7 @@ struct ExerciseDetailsView_Previews: PreviewProvider {
             pushPullLegs: nil,
             verticalHorizontalRotational: nil,
             stretch: nil,
-            videoURL: nil
+            videoURL: "Youtube.com"
         ))
     }
 }

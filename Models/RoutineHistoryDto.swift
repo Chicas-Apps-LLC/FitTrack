@@ -4,9 +4,6 @@
 //
 //  Created by Joseph Chica on 2/22/25.
 //
-
-import Foundation
-
 import Foundation
 
 struct RoutineHistoryDto: Identifiable {

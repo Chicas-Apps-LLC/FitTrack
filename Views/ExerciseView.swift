@@ -126,8 +126,8 @@ struct ExerciseView: View {
             
             ProgressSection(exerciseHistory: exerciseHistory)
                 .onAppear {
-                    mockLoadExerciseHistory()
-                    //loadExerciseHistory()
+                    //mockLoadExerciseHistory()
+                    loadExerciseHistory()
                 }
 
             Spacer()
