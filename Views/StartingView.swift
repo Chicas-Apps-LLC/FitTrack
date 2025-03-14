@@ -3,7 +3,6 @@
 //  FitTrack
 //
 //  Created by Joseph Chica on 9/26/24.
-//
 
 import SwiftUI
 import Logging

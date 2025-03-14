@@ -85,7 +85,7 @@ struct ExercisesListView: View {
             .toolbar {
                 // Exit Button
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: RoutineSelectorView()) {
+                    NavigationLink(destination: MainView()) {
                         Text("Exit")
                             .foregroundColor(AppColors.night)
                     }

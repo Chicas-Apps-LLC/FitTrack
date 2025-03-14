@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct RoutineSelectorView: View {
+struct MainView: View {
     @EnvironmentObject var userViewModel: UserViewModel
     @StateObject private var routineViewModel = RoutineViewModel()
     @State private var flippedStates: [Bool] = []
@@ -111,7 +111,7 @@ struct RoutineSelectorView: View {
 
 struct RoutineSelectorView_Previews: PreviewProvider {
     static var previews: some View {
-        RoutineSelectorView()
+        MainView()
             .environmentObject(mockUserViewModel)
             .environmentObject(mockRoutineViewModel)
     }

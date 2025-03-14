@@ -4,7 +4,6 @@
 //
 //  Created by Joseph Chica on 9/26/24.
 //
-
 import SwiftUI
 import Combine
 
@@ -12,27 +11,24 @@ struct GoalsView: View {
     @EnvironmentObject var userViewModel: UserViewModel
     
     // MARK: - State Variables
-    @State private var weightString = "" // Input for goal weight as a string
-    @State private var daysWorkingOutString = "" // Input for the number of workout days per week as a string
-    @State private var goal = "Strength" // Selected fitness goal from the picker
-    @StateObject private var viewModel = RoutineViewModel() 
-
+    @State private var weightString = ""
+    @State private var daysWorkingOutString = ""
+    @State private var goal = "Strength"
+    @State private var showContent = false  // For animation effect
+    
     // MARK: - Constants
-    let fitnessGoal = ["Strength", "Weight Loss", "Cardio",] // Array of fitness goal options
-    let primaryColor = Color(hex: "#19d4be") // Custom color for the finish button
+    let fitnessGoals = ["Strength", "Weight Loss", "Cardio"]
+    let minWeight = 50
+    let maxWeight = 500
+    let primaryColor = AppColors.primary
 
-    // MARK: - Computed Properties for Validation
-    private var weight: Int? {
-        Int(weightString)
-    }
-
-    private var daysWorkingOut: Int? {
-        Int(daysWorkingOutString)
-    }
+    // MARK: - Computed Properties
+    private var weight: Int? { Int(weightString) }
+    private var daysWorkingOut: Int? { Int(daysWorkingOutString) }
 
     private var isWeightValid: Bool {
         if let weight = weight {
-            return weight > 50 && weight < 500
+            return weight >= minWeight && weight <= maxWeight
         }
         return false
     }
@@ -49,113 +45,113 @@ struct GoalsView: View {
     }
 
     var body: some View {
-        ZStack {
-            VStack(spacing: 20) {
-                // Title text
-                Text("Please fill out this information:")
-                    .font(.headline)
-                    .padding(.bottom, 10)
-
-                // MARK: - Goal Weight Input
-                VStack(alignment: .leading, spacing: 5) {
-                    TextField("Goal Weight (lbs)", text: $weightString)
-                        .keyboardType(.numberPad)
-                        .padding(15)
-                        .background(Color.white)
-                        .cornerRadius(12)
-                        .onReceive(Just(weightString)) { newValue in
-                            // Filter out non-numeric characters
-                            let filtered = newValue.filter { "0123456789".contains($0) }
-                            if filtered != newValue {
-                                self.weightString = filtered
-                            }
-                        }
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                        )
-                        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 3)
-                        .padding(.horizontal)
-
-                    // Validation message for weight
-                    if !isWeightValid && !weightString.isEmpty {
-                        Text("Weight must be between 50 and 500 lbs.")
-                            .font(.caption)
-                            .foregroundColor(.red)
-                            .padding(.leading)
-                    }
-                }
-
-                // MARK: - Goal Days Working Out Input
-                VStack(alignment: .leading, spacing: 5) {
-                    TextField("Goal Days in Gym per Week", text: $daysWorkingOutString)
-                        .keyboardType(.numberPad)
-                        .onReceive(Just(daysWorkingOutString)) { newValue in
-                            // Filter out non-numeric characters
-                            let filtered = newValue.filter { "0123456789".contains($0) }
-                            if filtered != newValue {
-                                self.daysWorkingOutString = filtered
-                            }
-                        }
-                        .padding(15)
-                        .background(Color.white)
-                        .cornerRadius(12)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                        )
-                        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 3)
-                        .padding(.horizontal)
-
-                    // Validation message for days working out
-                    if !isDaysWorkingOutValid && !daysWorkingOutString.isEmpty {
-                        Text("Days must be between 1 and 7.")
-                            .font(.caption)
-                            .foregroundColor(.red)
-                            .padding(.leading)
-                    }
-                }
-
-                // MARK: - Fitness Goal Picker
-                HStack {
-                    Text("Goal")
-                        .font(.headline)
-                    Picker("Fitness Goal", selection: $goal) {
-                        ForEach(fitnessGoal, id: \.self) {
-                            Text($0)
-                                .font(.system(size: 18, weight: .medium))
-                        }
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                }
-                .padding(.horizontal)
-
-                NavigationLink(destination: RoutineSelectorView().environmentObject(viewModel)) {
-                    Text("Finish")
-                        .font(.system(size: 18, weight: .bold))
-                        .frame(maxWidth: .infinity)
-                        .padding(20)
-                        .background(isFormValid ? primaryColor : Color.gray.opacity(0.5))
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                        .padding(.horizontal)
-                }
-                .disabled(!isFormValid) // Disable button if form is invalid
-                .simultaneousGesture(
-                    TapGesture().onEnded {
-                        if isFormValid {
-                            // Save the user's goals using the UserViewModel
-                            if !userViewModel.saveUserGoals(goalWeight: weight ?? 0, gymDays: daysWorkingOut ?? 0, goalExercise: goal) {
-                                log(.error, "Failed to save user goals.")
-                            }
-                            // Trigger routine generation
-                            viewModel.createRoutinesBasedOnGoal(user: userViewModel.user ?? UserDto(userId: 999, name: "JoeShmoe"))
-                        }
-                    }
+        NavigationStack {
+            ZStack {
+                // Gradient Background
+                LinearGradient(
+                    gradient: Gradient(colors: [AppColors.primary, AppColors.secondary]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
                 )
-                .animation(.easeInOut, value: isFormValid)
+                .ignoresSafeArea()
+
+                ScrollView {
+                    VStack(spacing: 65) {
+                        Spacer()
+                        // Title
+                        Text("Set Your Goals")
+                            .font(.system(size: 38, weight: .bold, design: .rounded))
+                            .foregroundColor(AppColors.light)
+                            .opacity(showContent ? 1 : 0)
+                            .animation(.easeIn(duration: 0.8), value: showContent)
+
+                        Spacer()
+                        // Form Container
+                        VStack(spacing: 20) {
+                            inputField(title: "Goal Weight (lbs)", text: $weightString, isValid: isWeightValid, validationMessage: "Weight must be between \(minWeight) and \(maxWeight) lbs.")
+                            inputField(title: "Goal Days in Gym per Week", text: $daysWorkingOutString, isValid: isDaysWorkingOutValid, validationMessage: "Days must be between 1 and 7.")
+                            goalPicker
+                        }
+                        .padding()
+                        .background(AppColors.light.opacity(0.2))
+                        .cornerRadius(15)
+                        .shadow(radius: 5)
+                        .padding(.horizontal)
+                        .opacity(showContent ? 1 : 0)
+                        .animation(.easeIn(duration: 1.0), value: showContent)
+
+                        Spacer()
+                        // Finish Button
+                        NavigationLink(destination: MainView().environmentObject(userViewModel)) {
+                            Text("Finish")
+                                .font(.system(size: 18, weight: .bold, design: .rounded))
+                                .frame(maxWidth: .infinity)
+                                .padding(20)
+                                .background(isFormValid ? primaryColor : AppColors.gray)
+                                .foregroundColor(AppColors.light)
+                                .cornerRadius(12)
+                                .padding(.horizontal)
+                        }
+                        .disabled(!isFormValid)
+                        .opacity(showContent ? 1 : 0)
+                        .animation(.easeIn(duration: 1.2), value: showContent)
+                    }
+                    .padding(.top, 40)
+                }
             }
-            .padding(.top, 40)
+            .onAppear {
+                showContent = true
+            }
+        }
+    }
+    
+    // MARK: - Subviews
+    private var goalPicker: some View {
+        VStack {
+            Text("Select Goal")
+                .font(.headline)
+                .foregroundColor(.white)
+            
+            Picker("Fitness Goal", selection: $goal) {
+                ForEach(fitnessGoals, id: \.self) {
+                    Text($0)
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(.black)
+                }
+            }
+            .pickerStyle(SegmentedPickerStyle())
+            .background(Color.white.opacity(0.2))
+            .cornerRadius(12)
+            .padding(.horizontal)
+        }
+    }
+
+    private func inputField(title: String, text: Binding<String>, isValid: Bool, validationMessage: String) -> some View {
+        VStack(alignment: .leading, spacing: 5) {
+            TextField(title, text: text)
+                .keyboardType(.numberPad)
+                .padding(15)
+                .background(Color.white)
+                .cornerRadius(12)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                )
+                .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 3)
+                .padding(.horizontal)
+                .onReceive(Just(text.wrappedValue)) { newValue in
+                    let filtered = newValue.filter { "0123456789".contains($0) }
+                    if filtered != newValue {
+                        text.wrappedValue = filtered
+                    }
+                }
+
+            if !isValid && !text.wrappedValue.isEmpty {
+                Text(validationMessage)
+                    .font(.caption)
+                    .foregroundColor(.red)
+                    .padding(.leading)
+            }
         }
     }
 }
@@ -163,6 +159,6 @@ struct GoalsView: View {
 // MARK: - Preview
 struct GoalsView_Previews: PreviewProvider {
     static var previews: some View {
-        GoalsView()
+        GoalsView().environmentObject(UserViewModel())
     }
 }
