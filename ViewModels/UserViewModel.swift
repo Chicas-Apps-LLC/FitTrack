@@ -16,10 +16,11 @@ final class UserViewModel: ObservableObject {
     @Published var userStatsFilled = false
     @Published var userGoalsFilled = false
     @Published var validationErrors: [String] = []
+    @Published var userSetupFinished = false
     
     func isSetupComplete() -> Bool {
         log(.info, "the user is currently: \(String(describing: user?.name))")
-        return self.user?.name != nil
+        return self.userSetupFinished
     }
     
     func loadFirstUser() {
@@ -230,6 +231,8 @@ final class UserViewModel: ObservableObject {
             log(.error, "Failed to save goals for user ID \(user.userId).")
         }
 
+        userSetupFinished = true
+        
         return success
     }
     

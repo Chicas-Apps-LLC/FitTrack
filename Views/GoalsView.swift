@@ -15,6 +15,7 @@ struct GoalsView: View {
     @State private var daysWorkingOutString = ""
     @State private var goal = "Strength"
     @State private var showContent = false  // For animation effect
+    @StateObject private var routineViewModel = RoutineViewModel()
     
     // MARK: - Constants
     let fitnessGoals = ["Strength", "Weight Loss", "Cardio"]
@@ -93,6 +94,16 @@ struct GoalsView: View {
                                 .padding(.horizontal)
                         }
                         .disabled(!isFormValid)
+                        .simultaneousGesture(
+                            TapGesture().onEnded {
+                                if isFormValid {
+                                    if !userViewModel.saveUserGoals(goalWeight: weight ?? 0, gymDays: daysWorkingOut ?? 0, goalExercise: goal) {
+                                        log(.error, "Failed to save user goals.")
+                                    }
+                                    routineViewModel.createRoutinesBasedOnGoal(user: userViewModel.user ?? UserDto(userId: 999, name: "JoeShmoe"))
+                                }
+                            }
+                        )
                         .opacity(showContent ? 1 : 0)
                         .animation(.easeIn(duration: 1.2), value: showContent)
                     }

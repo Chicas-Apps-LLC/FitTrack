@@ -99,6 +99,24 @@ struct CurrentStatsView: View {
                         .padding(.horizontal)
                         .padding(.bottom, 20) // Prevents the button from being too low
                         .disabled(!isFormValid)
+                        .simultaneousGesture(
+                            TapGesture().onEnded {
+                                if isFormValid {
+                                    let success = userViewModel.saveUserStats(
+                                        age: selectedAge,
+                                        height: heightInInches,
+                                        weight: weight ?? 0,
+                                        bodyFat: Double(bodyFatString),
+                                        fitnessLevel: level,
+                                        gymMembership: member
+                                    )
+                                    
+                                    if !success {
+                                        log(.error, "Error: Could not save user stats.")
+                                    }
+                                }
+                            }
+                        )
                     }
                     .padding(.top, 60)
                 }

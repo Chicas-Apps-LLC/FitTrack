@@ -30,161 +30,141 @@ struct ExerciseView: View {
     }
 
     var body: some View {
-        VStack {
-            Spacer()
-            HStack {
-                Button(action: previousExercise) {
-                    Image(systemName: "chevron.left")
-                        .font(.title)
-                        .padding()
-                        .background(AppColors.light.opacity(0.7))
-                        .clipShape(Circle())
-                        .shadow(radius: 2)
-                }
-                .disabled(currentIndex == 0)
-                
-                NavigationLink(destination: ExerciseDetailsView(exercise: exercise)) {
-                    Text(exercise.name)
-                        .font(.title)
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(10)
-                        .shadow(radius: 2)
-                        .foregroundColor(.black)
-                }
+        ZStack {
+            LinearGradient(
+                gradient: Gradient(colors: [AppColors.primary, AppColors.secondary]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+            
+            VStack {
+                Spacer()
+                HStack {
+                    Button(action: previousExercise) {
+                        Image(systemName: "chevron.left")
+                            .font(.title)
+                            .padding()
+                            .background(AppColors.light.opacity(0.7))
+                            .clipShape(Circle())
+                            .shadow(radius: 2)
+                    }
+                    .disabled(currentIndex == 0)
+                    
+                    NavigationLink(destination: ExerciseDetailsView(exercise: exercise)) {
+                        Text(exercise.name)
+                            .font(.title)
+                            .padding()
+                            //.background(AppColors.light)
+                            .cornerRadius(30)
+                            .shadow(radius: 2)
+                            .foregroundColor(AppColors.secondary)
+                    }
 
-                Button(action: nextExercise) {
-                    Image(systemName: "chevron.right")
-                        .font(.title)
-                        .padding()
-                        .background(AppColors.light.opacity(0.7))
-                        .clipShape(Circle())
-                        .shadow(radius: 2)
+                    Button(action: nextExercise) {
+                        Image(systemName: "chevron.right")
+                            .font(.title)
+                            .padding()
+                            .background(AppColors.light.opacity(0.7))
+                            .clipShape(Circle())
+                            .shadow(radius: 2)
+                    }
+                    .disabled(currentIndex == (routine.exerciseWithSetsDto?.count ?? 1) - 1)
                 }
-                .disabled(currentIndex == (routine.exerciseWithSetsDto?.count ?? 1) - 1)
-            }
-            Spacer()
+                Spacer()
 
-            // Table with sets/reps/weight
-            VStack(alignment: .leading) {
-                HStack(spacing: 16) {
-                    Text("Set").bold().frame(maxWidth: .infinity, alignment: .center)
-                    Text("Reps").bold().frame(maxWidth: .infinity, alignment: .center)
-                    Text("Weight").bold().frame(maxWidth: .infinity, alignment: .center)
-                    Text("Done").bold().frame(maxWidth: .infinity, alignment: .center)
+                // Table with sets/reps/weight
+                VStack(alignment: .leading) {
+                    HStack(spacing: 16) {
+                        Text("Set").bold().frame(maxWidth: .infinity, alignment: .center)
+                        Text("Reps").bold().frame(maxWidth: .infinity, alignment: .center)
+                        Text("Weight").bold().frame(maxWidth: .infinity, alignment: .center)
+                        Text("Done").bold().frame(maxWidth: .infinity, alignment: .center)
+                    }
+                    .padding()
+                    .background(AppColors.light.opacity(0.7))
+                    .cornerRadius(10)
+
+                    ForEach(sets.indices, id: \.self) { index in
+                        HStack(spacing: 16) {
+                            Text("\(sets[index].setNumber)")
+                                .frame(maxWidth: .infinity, alignment: .center)
+
+                            if isEditing {
+                                TextField("", value: $sets[index].reps, formatter: NumberFormatter())
+                                    .keyboardType(.numberPad)
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .frame(maxWidth: .infinity, alignment: .center)
+
+                                TextField("", value: $sets[index].weight, formatter: NumberFormatter())
+                                    .keyboardType(.numberPad)
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .frame(maxWidth: .infinity, alignment: .center)
+                            } else {
+                                Text("\(sets[index].reps)")
+                                    .frame(maxWidth: .infinity, alignment: .center)
+                                Text("\(formattedWeight(sets[index].weight)) lbs")
+                                    .frame(maxWidth: .infinity, alignment: .center)
+                            }
+
+                            Button(action: { toggleSetStatus(index: index) }) {
+                                Image(systemName: sets[index].isDone ? "checkmark.circle.fill" : "circle")
+                                    .foregroundColor(sets[index].isDone ? AppColors.primary : AppColors.primary)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .center)
+                        }
+                        .padding(.vertical, 8)
+                    }
                 }
                 .padding()
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(10)
+                .background(AppColors.light.opacity(0.2))
+                .cornerRadius(15)
+                .shadow(radius: 50)
 
-                ForEach(sets.indices, id: \.self) { index in
-                    HStack(spacing: 16) {
-                        Text("\(sets[index].setNumber)")
-                            .frame(maxWidth: .infinity, alignment: .center)
-
-                        if isEditing {
-                            TextField("", value: $sets[index].reps, formatter: NumberFormatter())
-                                .keyboardType(.numberPad)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .frame(maxWidth: .infinity, alignment: .center)
-
-                            TextField("", value: $sets[index].weight, formatter: NumberFormatter())
-                                .keyboardType(.numberPad)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .frame(maxWidth: .infinity, alignment: .center)
-                        } else {
-                            Text("\(sets[index].reps)")
-                                .frame(maxWidth: .infinity, alignment: .center)
-                            Text("\(formattedWeight(sets[index].weight)) lbs")
-                                .frame(maxWidth: .infinity, alignment: .center)
-                        }
-
-                        Button(action: { toggleSetStatus(index: index) }) {
-                            Image(systemName: sets[index].isDone ? "checkmark.circle.fill" : "circle")
-                                .foregroundColor(sets[index].isDone ? AppColors.primary : AppColors.gray)
-                        }
+                // Rest timer
+                if isTimerActive {
+                    Text("Rest Timer: \(formattedTime)")
+                        .font(.headline)
+                        .foregroundColor(AppColors.primary)
                         .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.top, 10)
+                }
+                
+                Spacer()
+                
+                ProgressSection(exerciseHistory: exerciseHistory)
+                    .onAppear {
+                        //mockLoadExerciseHistory()
+                        loadExerciseHistory()
                     }
-                    .padding(.vertical, 8)
+
+                Spacer()
+
+                // Edit button
+                HStack {
+                    Button(action: { isEditing.toggle() }) {
+                        Text(isEditing ? "Done" : "Edit")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(isEditing ? .green : .blue)
+                            .cornerRadius(10)
+                    }
                 }
             }
             .padding()
-            .background(Color.white)
-            .cornerRadius(15)
-            .shadow(radius: 5)
-
-            // Rest timer
-            if isTimerActive {
-                Text("Rest Timer: \(formattedTime)")
-                    .font(.headline)
-                    .foregroundColor(AppColors.primary)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.top, 10)
+            .onDisappear {
+                timer?.invalidate()
+                isTimerActive = false
+                timerValue = 0
             }
-            
-            Spacer()
-            
-            ProgressSection(exerciseHistory: exerciseHistory)
-                .onAppear {
-                    //mockLoadExerciseHistory()
-                    loadExerciseHistory()
-                }
-
-            Spacer()
-
-            // Edit button
-            HStack {
-                Button(action: { isEditing.toggle() }) {
-                    Text(isEditing ? "Done" : "Edit")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(isEditing ? .green : .blue)
-                        .cornerRadius(10)
-                }
-            }
-        }
-        .padding()
-        .onDisappear {
-            timer?.invalidate()
-            isTimerActive = false
-            timerValue = 0
         }
     }
 
     // MARK: - Load Exercise History
     private func loadExerciseHistory() {
         exerciseHistory = viewModel.getExerciseHistory(exerciseId: exercise.id)
-    }
-    
-    private func mockLoadExerciseHistory() {
-        // Simulating data fetch (replace with real database call)
-        let sampleHistory = [
-            ExerciseHistoryDto(
-                id: 1,
-                exerciseId: exercise.id,
-                routineId: routine.id,
-                routineHistoryId: 999,
-                date: Date().addingTimeInterval(-86400),
-                sets: [
-                    SetsDto(setNumber: 1, reps: 10, weight: 50),
-                    SetsDto(setNumber: 2, reps: 8, weight: 52.5)
-                ]
-            ),
-            ExerciseHistoryDto(
-                id: 2,
-                exerciseId: exercise.id,
-                routineId: routine.id,
-                routineHistoryId: 1234,
-                date: Date().addingTimeInterval(-172800),
-                sets: [
-                    SetsDto(setNumber: 1, reps: 9, weight: 55),
-                    SetsDto(setNumber: 2, reps: 7, weight: 57.5)
-                ]
-            )
-        ]
-        exerciseHistory = sampleHistory.filter { $0.exerciseId == exercise.id }
     }
 
     // MARK: - Helpers
@@ -257,12 +237,14 @@ struct ProgressSection: View {
             Text("Exercise Progress")
                 .font(.title2)
                 .bold()
-                .padding(.bottom, 5)
+                .padding()
+                .background(AppColors.light.opacity(0.7))
+                .cornerRadius(25)
 
             Group {  // Helps Swift break down type-checking
                 if exerciseHistory.isEmpty {
                     Text("No history available.")
-                        .foregroundColor(.gray)
+                        .foregroundColor(AppColors.night.opacity(0.6))
                         .padding()
                 } else {
                     ForEach(exerciseHistory, id: \.id) { history in
@@ -276,9 +258,9 @@ struct ProgressSection: View {
             }
         }
         .padding()
-        .background(Color.white)
+        .background(AppColors.light.opacity(0.3))
         .cornerRadius(15)
-        .shadow(radius: 5)
+        .shadow(radius: 55)
     }
 
     private func secondForEach(history: ExerciseHistoryDto) -> some View {

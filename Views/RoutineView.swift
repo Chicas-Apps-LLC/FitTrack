@@ -18,39 +18,29 @@ struct RoutineView: View {
     @State private var isProgressExpanded = false
 
     var body: some View {
-        ZStack(alignment: .bottom){
-            AppColors.light.ignoresSafeArea()
-
+        ZStack(alignment: .bottom) {
+            LinearGradient(
+                gradient: Gradient(colors: [AppColors.primary, AppColors.secondary]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+                        
             ScrollView {
                 VStack(spacing: 20) {
-                    // Routine Name
                     routineName
-                    
-                    // stopwatch
-                    if isStarted{
-                        stopwatchView
-                    }
-                    
-                    // Exercises List
+                    if isStarted { stopwatchView }
+                    Spacer()
                     exercisesList
-                    
-                    Spacer()
-                    
-                    // Progress Section (Past Sessions)
                     progressHistorySection
-                    
-                    Spacer()
                 }
                 .padding()
                 .navigationTitle("Workout Routine")
-                .onAppear {
-                   // loadRoutineHistory()
-                    mockLoadRoutineHistory()
-                }
+                .onAppear { mockLoadRoutineHistory() }
             }
+            
             startFinishButton
                 .padding(.bottom, 20)
-                .shadow(radius: 5)
         }
     }
 
@@ -59,22 +49,26 @@ struct RoutineView: View {
     private var routineName: some View {
         Text(routine.name)
             .font(.system(size: 28, weight: .bold, design: .rounded))
+            .foregroundColor(AppColors.light)
             .padding(.top, 20)
     }
-    
+
     private var stopwatchView: some View {
         Text("Time: \(formattedTime(elapsedTime))")
             .font(.headline)
             .foregroundColor(.black)
-            .frame(maxWidth: .infinity, alignment: .center)
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.white.opacity(0.2))
+            .cornerRadius(12)
     }
 
     private var exercisesList: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Exercises:")
+            Text("Exercises")
                 .font(.title2)
+                .foregroundColor(.white)
                 .padding(.top, 10)
-                .frame(maxWidth: .infinity, alignment: .center)
 
             if let exercisesWithSets = routine.exerciseWithSetsDto, !exercisesWithSets.isEmpty {
                 ForEach(exercisesWithSets, id: \.exercise.id) { exerciseWithSets in
@@ -82,13 +76,12 @@ struct RoutineView: View {
                         HStack {
                             Text(exerciseWithSets.exercise.name)
                                 .font(.body)
-                                .padding()
-                                .frame(maxWidth: .infinity, alignment: .center)
-                                .background(Color.white)
-                                .cornerRadius(10)
-                                .shadow(radius: 2)
                                 .foregroundColor(.black)
-                            Spacer()
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.white)
+                                .cornerRadius(12)
+                                .shadow(radius: 2)
                         }
                     }
                 }
@@ -98,6 +91,9 @@ struct RoutineView: View {
                     .italic()
             }
         }
+        .padding()
+        .background(RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.white.opacity(0.2)))
         .padding(.horizontal)
     }
     
@@ -112,45 +108,38 @@ struct RoutineView: View {
                 .cornerRadius(12)
                 .padding(.horizontal)
         }
-        .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 2)
+        .shadow(color: Color.black.opacity(0.2), radius: 5)
     }
-    
+
     private var progressHistorySection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Button(action: {
-                withAnimation {
-                    isProgressExpanded.toggle()
-                }
-            }) {
+            Button(action: { withAnimation { isProgressExpanded.toggle() } }) {
                 HStack {
                     Text("Routine Progress")
                         .font(.title2)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    Text(isProgressExpanded ? "▲" : "▼") // Toggle arrow icon
+                        .foregroundColor(.white)
+                    Spacer()
+                    Image(systemName: isProgressExpanded ? "chevron.up" : "chevron.down")
+                        .foregroundColor(.white)
                         .font(.title2)
                 }
                 .padding()
-                .background(Color.white)
-                .cornerRadius(12)
+                .background(RoundedRectangle(cornerRadius: 12).fill(Color.white.opacity(0.2)))
                 .shadow(radius: 2)
             }
 
-            if isProgressExpanded { // Only show when expanded
+            if isProgressExpanded {
                 ExpandedProgressHistoryView(pastSessions: pastSessions)
             }
         }
         .padding()
-        .background(Color.white)
-        .cornerRadius(12)
-        .shadow(radius: 3)
+        .background(RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.white.opacity(0.2)))
         .padding(.horizontal)
     }
 
     // MARK: - Helpers
-    private func loadRoutineHistory() {
-        pastSessions = viewModel.getRoutineHistory(routineId: routine.id)
-    }
-    
+
     private func mockLoadRoutineHistory() {
         self.pastSessions = [
             RoutineHistoryDto(id: 1, routineId: routine.id, userId: 1, date: Date().addingTimeInterval(-86400),
@@ -160,13 +149,6 @@ struct RoutineView: View {
         ]
     }
 
-
-    private func formattedDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        return formatter.string(from: date)
-    }
-
     private func formattedTime(_ seconds: Int) -> String {
         let hours = seconds / 3600
         let minutes = (seconds % 3600) / 60
@@ -174,14 +156,11 @@ struct RoutineView: View {
         return String(format: "%02d:%02d:%02d", hours, minutes, sec)
     }
 
-    
     private func toggleRoutine() {
         if isStarted {
-            // Stop the stopwatch
             timer?.invalidate()
             timer = nil
         } else {
-            // Start the stopwatch
             timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
                 elapsedTime += 1
             }
@@ -202,16 +181,27 @@ struct ExpandedProgressHistoryView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
             } else {
                 ForEach(pastSessions) { session in
-                    VStack(alignment: .leading) {
-                        Text("Workout on \(session.date?.formatted() ?? "No date")")
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text("Workout on \(formattedDate(session.date))")
                             .font(.headline)
+                            .foregroundColor(.white)
                         Text("Duration: \(formattedTime(Int(session.duration ?? 0)))")
+                            .foregroundColor(.white.opacity(0.8))
                     }
-                    
+                    .padding()
+                    .background(RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color.white.opacity(0.2)))
                 }
             }
         }
         .padding(.top, 5)
+    }
+
+    private func formattedDate(_ date: Date?) -> String {
+        guard let date = date else { return "No date" }
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        return formatter.string(from: date)
     }
 
     private func formattedTime(_ seconds: Int) -> String {
