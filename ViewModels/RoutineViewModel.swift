@@ -128,4 +128,8 @@ final class RoutineViewModel: ObservableObject {
         }
         return routines
     }
+    
+    func saveRoutine(routine: RoutineDto) -> Bool{
+        return dm.saveRoutineWithExercisesToDb(routine)
+    }
 }

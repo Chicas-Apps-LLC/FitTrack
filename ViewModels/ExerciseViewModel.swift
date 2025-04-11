@@ -86,7 +86,30 @@ final class ExerciseViewModel: ObservableObject {
         return ExerciseWithSetsDto(exercise: exercise, sets: sets)
     }
     
+    func createExerciseWithSetsFromExercise(exercise: ExerciseDto, sets: Int, reps: Int, weight: Double) -> ExerciseWithSetsDto {
+        let setsArray = (1...sets).map { setNumber in
+            SetsDto(setNumber: setNumber, reps: reps, weight: weight)
+        }
+        return ExerciseWithSetsDto(exercise: exercise, sets: setsArray)
+    }
+    
+//    func saveExercisesWithSets(exercises: [ExerciseWithSetsDto], routineId: Int) -> Bool{
+//        let success = dm.saveExercisesWithSetsToDb(exercisesWithSets: exercises, routineId: routineId)
+//        if (success) {
+//            log(.info, "Saved exercies to routine \(routineId)")
+//            return true
+//        }
+//        else {
+//            log(.error, "unable to save exercises, check logs for further information")
+//        }
+//            return false
+//    }
+    
     func getExerciseHistory(exerciseId: Int) -> [ExerciseHistoryDto] {
         return dm.getExerciseHistory(exerciseId: exerciseId)
+    }
+    
+    func getExerciseDetailsByName(exerciseName: String) -> ExerciseDto{
+        return dm.getExerciseDetailsByName(forName: exerciseName)
     }
 }

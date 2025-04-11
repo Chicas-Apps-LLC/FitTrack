@@ -416,8 +416,8 @@ class DatabaseManager {
         }
     }
     
-    func getExerciseDetailsByName(forName name: String) throws -> ExerciseDto {
-        try dbQueue.sync {
+    func getExerciseDetailsByName(forName name: String) -> ExerciseDto {
+        return performDatabaseTask{
             openDatabase()
             let helper = DatabaseManagerHelper.shared
             var exercise: ExerciseDto?
@@ -461,17 +461,12 @@ class DatabaseManager {
             } else {
                 let errorMessage = String(cString: sqlite3_errmsg(db))
                 log(.error, "Error preparing statement: \(errorMessage)")
-                throw DatabaseManagerError.queryError(message: errorMessage)
             }
             
             sqlite3_finalize(statement)
             closeDatabase()
 
-            if let exercise = exercise {
-                return exercise
-            } else {
-                throw DatabaseManagerError.noDataFound(message: "No exercise found with name \(name).")
-            }
+            return exercise ?? ExerciseDto(id: 999, name: "NA", description: "NA", level: nil, instructions: nil, equipmentNeeded: nil, overloading: nil, powerStrengthSupplement: nil, isolationCompoundAccessory: nil, pushPullLegs: nil, verticalHorizontalRotational: nil, stretch: nil, videoURL: nil)
         }
     }
     
@@ -679,7 +674,7 @@ class DatabaseManager {
             log(.info, "Routine inserted with ID: \(routineId)")
 
             // Insert exercises into RoutineExercises table
-            if !saveExercisesWithSetsToDb(exercisesWithSets: routine.exerciseWithSetsDto!, routineId: Int(routineId), dm: dm) {
+            if !_saveExercisesWithSetsToDb(exercisesWithSets: routine.exerciseWithSetsDto!, routineId: Int(routineId)) {
                 log(.error, "Error saving exercises for routine \(routineId)")
             }
 
@@ -695,67 +690,64 @@ class DatabaseManager {
         }
     }
     
-    func saveExercisesWithSetsToDb(exercisesWithSets: [ExerciseWithSetsDto], routineId: Int, dm: OpaquePointer?) -> Bool {
-        guard let dm = dm else {
-            log(.error, "Database connection is nil")
-            return false
-        }
-
+    private func _saveExercisesWithSetsToDb(exercisesWithSets: [ExerciseWithSetsDto], routineId: Int) -> Bool {
+        let dm = DatabaseManager.shared.db
+        
         let insertExerciseQuery = "INSERT INTO RoutineExercises (routine_id, exercise_id) VALUES (?, ?);"
         let insertSetQuery = "INSERT INTO RoutineExerciseSets (routine_exercise_id, set_number, reps, weight) VALUES (?, ?, ?, ?);"
-
+        
         for exerciseWithSets in exercisesWithSets {
             let exerciseId = exerciseWithSets.exercise.id
             var exerciseStatement: OpaquePointer?
-
+            
             // Insert into RoutineExercises table
             guard sqlite3_prepare_v2(dm, insertExerciseQuery, -1, &exerciseStatement, nil) == SQLITE_OK else {
                 let errorMessage = String(cString: sqlite3_errmsg(dm))
                 log(.error, "Failed to prepare exercise insert statement: \(errorMessage)")
                 return false
             }
-
+            
             sqlite3_bind_int(exerciseStatement, 1, Int32(routineId))
             sqlite3_bind_int(exerciseStatement, 2, Int32(exerciseId))
-
+            
             guard sqlite3_step(exerciseStatement) == SQLITE_DONE else {
                 let errorMessage = String(cString: sqlite3_errmsg(dm))
                 log(.error, "Failed to insert exercise into RoutineExercises: \(errorMessage)")
                 sqlite3_finalize(exerciseStatement)
                 return false
             }
-
+            
             // Get last inserted ID for routine_exercise_id
             let routineExerciseId = sqlite3_last_insert_rowid(dm)
             log(.info, "Inserted Exercise ID: \(exerciseId) into RoutineExercises with ID: \(routineExerciseId).")
-
+            
             // Finalize exerciseStatement before moving to sets
             sqlite3_finalize(exerciseStatement)
-
+            
             // Insert sets into RoutineExerciseSets table
             for set in exerciseWithSets.sets {
                 var setStatement: OpaquePointer?
-
+                
                 guard sqlite3_prepare_v2(dm, insertSetQuery, -1, &setStatement, nil) == SQLITE_OK else {
                     let errorMessage = String(cString: sqlite3_errmsg(dm))
                     log(.error, "Failed to prepare set insert statement: \(errorMessage)")
                     return false
                 }
-
+                
                 sqlite3_bind_int(setStatement, 1, Int32(routineExerciseId))
                 sqlite3_bind_int(setStatement, 2, Int32(set.setNumber))
                 sqlite3_bind_int(setStatement, 3, Int32(set.reps))
                 sqlite3_bind_double(setStatement, 4, set.weight)
-
+                
                 guard sqlite3_step(setStatement) == SQLITE_DONE else {
                     let errorMessage = String(cString: sqlite3_errmsg(dm))
                     log(.error, "Failed to insert set into RoutineExerciseSets: \(errorMessage)")
                     sqlite3_finalize(setStatement)
                     return false
                 }
-
+                
                 log(.info, "Inserted Set: \(set.setNumber), Reps: \(set.reps), Weight: \(set.weight) for RoutineExercise ID: \(routineExerciseId).")
-
+                
                 // Finalize setStatement after each set
                 sqlite3_finalize(setStatement)
             }
@@ -826,7 +818,7 @@ class DatabaseManager {
             exercisesWithSets.append(exerciseWithSets)
         }
         return RoutineDto(
-            id: Int.random(in: 1000...9999),  // Generate a random ID
+            id: Int.random(in: 1000...9999),
             name: "Bodyweight Routine",
             description: "A bodyweight-only workout routine.",
             exerciseWithSetsDto: exercisesWithSets
