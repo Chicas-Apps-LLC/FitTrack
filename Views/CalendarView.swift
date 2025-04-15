@@ -33,32 +33,48 @@ struct CalendarView: View {
     }
 
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             header
+                .padding(.bottom, 25)
             daysOfWeekHeader
+                .padding(.bottom, 25)
             calendarGrid
+                .padding(.bottom, 120)
         }
-        .padding()
+        .padding([.leading, .trailing, .top], 12)
     }
 
     private var header: some View {
-        HStack {
-            Button(action: {
-                changeMonth(by: -1)
-            }) {
-                Image(systemName: "chevron.left")
+        VStack {
+            HStack {
+                Button(action: {
+                    changeMonth(by: -1)
+                }) {
+                    Image(systemName: "chevron.left")
+                }
+                Spacer()
+                Text(monthYearString(from: currentDate))
+                    .font(.headline)
+                Spacer()
+                Button(action: {
+                    changeMonth(by: 1)
+                }) {
+                    Image(systemName: "chevron.right")
+                }
             }
-            Spacer()
-            Text(monthYearString(from: currentDate))
-                .font(.headline)
-            Spacer()
-            Button(action: {
-                changeMonth(by: 1)
-            }) {
-                Image(systemName: "chevron.right")
+            .padding()
+            Button("Today") {
+                withAnimation(.easeInOut) {
+                    currentDate = Date()
+                }
             }
+            .font(.caption)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(AppColors.gray.opacity(0.2))
+            .cornerRadius(6)
         }
-        .padding()
+        
     }
 
     private var daysOfWeekHeader: some View {
@@ -71,11 +87,11 @@ struct CalendarView: View {
     }
 
     private var calendarGrid: some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 10) {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 16) {
             // Empty slots for the first week offset
             ForEach(0..<firstDayOfWeekOffset, id: \.self) { _ in
                 Color.clear
-                    .frame(height: 40)
+                    .frame(height: 75)
             }
             // Days of the current month
             ForEach(currentMonthDays, id: \.self) { date in
@@ -84,7 +100,7 @@ struct CalendarView: View {
                 
                 Text("\(calendar.component(.day, from: date))")
                     .font(.subheadline)
-                    .frame(maxWidth: .infinity, minHeight: 40)
+                    .frame(maxWidth: .infinity, minHeight: 75)
                     .background(isToday ? AppColors.primary : AppColors.primary.opacity(0.2))
                     .foregroundColor(isToday ? .white : .primary)
                     .cornerRadius(8)
@@ -97,8 +113,10 @@ struct CalendarView: View {
                 }
             }
         }
+        .transition(.opacity)
+        .animation(.easeInOut, value: currentDate)
     }
-
+    
     private func changeMonth(by value: Int) {
         if let newDate = calendar.date(byAdding: .month, value: value, to: currentDate) {
             currentDate = newDate
