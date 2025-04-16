@@ -58,7 +58,11 @@ final class DatabaseManagerTest: XCTestCase {
         
         if exercises.count > 0 {
             let firstExercise = exercises.first
-            XCTAssertNotNil(firstExercise?.name, "Exercise name should not be nil")
+            XCTAssertNotNil(firstExercise.name, "Exercise name should not be nil")
+            XCTAssertTrue(firstExercise.name.lowercased().contains("squat"), "Exercise name should contain the keyword squat ")            
+        }
+        else {
+            XCTFail("Query returned 0 exercises with squat")
         }
     }
     
@@ -313,7 +317,6 @@ final class DatabaseManagerTest: XCTestCase {
 
         let secondRoutine = 2
         let secondDay = 3
-        // Add the days to the routine
         for day in daysToAdd {
             DatabaseManager.shared.addDayToRoutine(day: day, routineId: routineId)
         }
