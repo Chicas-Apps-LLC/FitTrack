@@ -1293,6 +1293,12 @@ class DatabaseManager {
         return routines
     }
 
+    func getAllRoutineSchedules() -> [(routineId: Int, dayOfWeek: Int)] {
+        var result: [(Int, Int)] = []
+        //TODO: gets all info from routine schedule table in db. add to result
+        
+        return result
+    }
     func deleteRoutine(routine: RoutineDto) -> Bool {
         return performDatabaseTask {
             openDatabase() // Ensure the database is open

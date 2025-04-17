@@ -132,4 +132,41 @@ final class RoutineViewModel: ObservableObject {
     func saveRoutine(routine: RoutineDto) -> Bool{
         return dm.saveRoutineWithExercisesToDb(routine)
     }
+    
+    func calculateRoutineSchedule(routines: [RoutineDto], daysInGym: Int) {
+        guard daysInGym > 0, daysInGym <= 7 else {
+            print("Error: daysInGym must be between 1 and 7.")
+            return
+        }
+        
+        guard !routines.isEmpty else {
+            print("Error: No routines to schedule.")
+            return
+        }
+
+        // Evenly distribute selected days in week (1 = Sunday, 7 = Saturday)
+        let spacing = Double(7) / Double(daysInGym)
+        var scheduledDays: [Int] = []
+        
+        for i in 0..<daysInGym {
+            let day = Int(round(Double(i) * spacing)) % 7 + 1
+            if !scheduledDays.contains(day) {
+                scheduledDays.append(day)
+            }
+        }
+
+        // Cycle through the selected days and assign each routine to one
+        for (index, routine) in routines.enumerated() {
+            let day = scheduledDays[index % scheduledDays.count]
+            dm.addDayToRoutine(day: day, routineId: routine.id)
+        }
+    }
+    
+    func assignRoutineToDay(routine: RoutineDto, day: Int) {
+        guard (1...7).contains(day) else {
+            print("Error: Invalid day. Must be between 1 (Sunday) and 7 (Saturday).")
+            return
+        }        
+        dm.addDayToRoutine(day: day, routineId: routine.id)
+    }
 }
