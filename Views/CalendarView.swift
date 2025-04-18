@@ -9,8 +9,13 @@ import SwiftUI
 
 struct CalendarView: View {
     @State private var currentDate = Date()
+    @State private var showAddRoutineMenu = false
+    @State private var selectedDate: Date? = nil
+    @State private var navigateToExerciseList = false
+
     @ObservedObject var routineViewModel: RoutineViewModel
 
+    
     private var calendar: Calendar {
         Calendar.current
     }
@@ -35,11 +40,15 @@ struct CalendarView: View {
     var body: some View {
         VStack(spacing: 0) {
             header
-                .padding(.bottom, 25)
             daysOfWeekHeader
-                .padding(.bottom, 25)
+                .padding(.top, 25)
             calendarGrid
-                .padding(.bottom, 120)
+                .padding(.top, 20)
+                .padding(.bottom, 60)
+            addRoutineButton
+                .padding(.bottom, 10)
+            
+            
         }
         .padding([.leading, .trailing, .top], 12)
     }
@@ -96,25 +105,32 @@ struct CalendarView: View {
             // Days of the current month
             ForEach(currentMonthDays, id: \.self) { date in
                 let isToday = calendar.isDate(date, inSameDayAs: Date())
+                let isSelected = selectedDate != nil && calendar.isDate(date, inSameDayAs: selectedDate!)
                 let hasRoutine = hasRoutineForDate(date)
                 
-                Text("\(calendar.component(.day, from: date))")
-                    .font(.subheadline)
-                    .frame(maxWidth: .infinity, minHeight: 75)
-                    .background(isToday ? AppColors.primary : AppColors.primary.opacity(0.2))
-                    .foregroundColor(isToday ? .white : .primary)
-                    .cornerRadius(8)
-                    .shadow(color: isToday ? Color.black.opacity(0.3) : Color.clear, radius: 5)
-                
-                if hasRoutine {
-                    Circle()
-                        .fill(AppColors.night)
-                        .frame(width: 6, height: 6)
+                Button(action: {
+                    selectedDate = date
+                }) {
+                    VStack(spacing: 6) {
+                        Text("\(calendar.component(.day, from: date))")
+                            .font(.subheadline)
+                            .foregroundColor(isSelected ? .white : .primary)
+                            .frame(maxWidth: .infinity, minHeight: 75)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(isSelected ? AppColors.primary : AppColors.primary.opacity(0.2))
+                            )
+                        if hasRoutine {
+                            Circle()
+                                .fill(AppColors.night)
+                                .frame(width: 6, height: 6)
+                        }
+                    }
+                    .frame(height: 75)
                 }
+                .buttonStyle(PlainButtonStyle()) // Prevent default blue tap style
             }
         }
-        .transition(.opacity)
-        .animation(.easeInOut, value: currentDate)
     }
     
     private func changeMonth(by value: Int) {
@@ -137,6 +153,45 @@ struct CalendarView: View {
         let weekdayIndex = getWeekdayIndex(from: date)
         return !routineViewModel.getRoutinesForDay(day: weekdayIndex).isEmpty
     }
+    
+    private var addRoutineButton: some View {
+        ZStack {
+            NavigationLink(
+                destination: ExercisesListView(selectedDate: selectedDate),
+                isActive: $navigateToExerciseList
+            ) {
+                EmptyView()
+            }
+
+            Button(action: {
+                showAddRoutineMenu = true
+            }) {
+                HStack {
+                    Image(systemName: "plus")
+                    Text("Add Routine To Day")
+                }
+                .font(.subheadline)
+                .foregroundColor(.white)
+                .padding(.vertical, 18)
+                .frame(maxWidth: .infinity)
+                .background(AppColors.primary)
+                .cornerRadius(10)
+                .shadow(color: AppColors.primary.opacity(0.3), radius: 5, x: 0, y: 2)
+            }
+            .frame(width: UIScreen.main.bounds.width * 0.40)
+            .confirmationDialog("Add Routine", isPresented: $showAddRoutineMenu, titleVisibility: .visible) {
+                Button("Create New Routine") {
+                    navigateToExerciseList = true
+                }
+                Button("Select Existing Routine") {
+                    // Add logic later
+                }
+                Button("Cancel", role: .cancel) {}
+            }
+        }
+
+    }
+
 }
 
 struct CalendarView_Previews: PreviewProvider {

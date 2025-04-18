@@ -16,6 +16,8 @@ struct CreateRoutineView: View {
     @State private var routineName: String = ""
     @State private var routineDescription: String = ""
     @State private var errorMessage: String?
+    
+    var selectedDate: Date? = nil
 
     var body: some View {
         NavigationView {
@@ -43,6 +45,9 @@ struct CreateRoutineView: View {
                 Section {
                     Button("Create Routine") {
                         createRoutine()
+                        if (selectedDate != nil) {
+                            
+                        }
                     }
                 }
             }

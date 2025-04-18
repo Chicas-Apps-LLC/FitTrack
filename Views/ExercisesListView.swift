@@ -13,6 +13,7 @@ struct ExercisesListView: View {
     @State private var filteredExercises: [String] = []  // Filtered exercises based on search
     @State private var selectedExercises: [String] = [] // Selected exercises for the new routine
     @State private var showCreateRoutineView = false
+    var selectedDate: Date? = nil
 
     var body: some View {
         NavigationView {
@@ -76,8 +77,8 @@ struct ExercisesListView: View {
                                 .cornerRadius(25)
                                 .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 2)
                         }
-                        .padding(.horizontal, 50) // Add padding for button width
-                        .padding(.bottom, 20) // Space above bottom edge
+                        .padding(.horizontal, 50)
+                        .padding(.bottom, 20)
                     }
                 }
             }
@@ -92,7 +93,10 @@ struct ExercisesListView: View {
                 }
             }
             .sheet(isPresented: $showCreateRoutineView) {
-                CreateRoutineView(selectedExercises: $selectedExercises)
+                if !showCreateRoutineView {
+                    CreateRoutineView(selectedExercises: $selectedExercises)
+                }
+                
             }
             .onAppear {
                 loadExercises()
