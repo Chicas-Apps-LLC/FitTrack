@@ -93,10 +93,7 @@ struct ExercisesListView: View {
                 }
             }
             .sheet(isPresented: $showCreateRoutineView) {
-                if !showCreateRoutineView {
-                    CreateRoutineView(selectedExercises: $selectedExercises)
-                }
-                
+                CreateRoutineView(selectedExercises: $selectedExercises, selectedDate: selectedDate)
             }
             .onAppear {
                 loadExercises()
@@ -168,8 +165,6 @@ struct ExercisesListView: View {
         }
     }
 }
-
-
 
 #Preview {
     ExercisesListView()

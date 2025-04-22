@@ -12,6 +12,7 @@ struct CalendarView: View {
     @State private var showAddRoutineMenu = false
     @State private var selectedDate: Date? = nil
     @State private var navigateToExerciseList = false
+    @State private var showRoutines = false
 
     @ObservedObject var routineViewModel: RoutineViewModel
 
@@ -184,14 +185,12 @@ struct CalendarView: View {
                     navigateToExerciseList = true
                 }
                 Button("Select Existing Routine") {
-                    // Add logic later
+                    
                 }
                 Button("Cancel", role: .cancel) {}
             }
         }
-
     }
-
 }
 
 struct CalendarView_Previews: PreviewProvider {

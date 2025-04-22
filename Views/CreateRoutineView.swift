@@ -44,9 +44,11 @@ struct CreateRoutineView: View {
 
                 Section {
                     Button("Create Routine") {
-                        createRoutine()
-                        if (selectedDate != nil) {
-                            
+                        if let newRoutine = createRoutine() {
+                            if let date = selectedDate {
+                                routineViewModel.assignRoutineToDay(routine: newRoutine, date: date)
+                            }
+                            dismiss()
                         }
                     }
                 }
@@ -63,10 +65,10 @@ struct CreateRoutineView: View {
         }
     }
 
-    private func createRoutine() {
+    private func createRoutine() -> RoutineDto? {
         guard !routineName.isEmpty else {
             errorMessage = "Routine name cannot be empty."
-            return
+            return nil
         }
 
         // Fetch exercise details
@@ -77,7 +79,6 @@ struct CreateRoutineView: View {
             exercises.append(ews)
         }
         
-
         let routine = RoutineDto(
             id: 0,
             name: routineName,
@@ -89,11 +90,11 @@ struct CreateRoutineView: View {
         let success = routineViewModel.saveRoutine(routine: routine)
         if success {
             log(.info, "Successfully saved routine to database")
-            dismiss()
+            return routineViewModel.getRoutineByName(routineName)
         } else {
             errorMessage = "Failed to save routine to the database."
+            return nil
         }
-
     }
 }
 

@@ -974,7 +974,7 @@ class DatabaseManager {
     
     func addDayToRoutine(day: Int, routineId: Int) {
         guard (1...7).contains(day) else {
-            print("Error: Invalid day. Must be between 1 (Sunday) and 7 (Saturday).")
+            log(.error, "Error: Invalid day. Must be between 1 (Sunday) and 7 (Saturday).")
             return
         }
         performDatabaseTask {
@@ -989,9 +989,9 @@ class DatabaseManager {
                 sqlite3_bind_int(statement, 2, Int32(day))
                 
                 if sqlite3_step(statement) == SQLITE_DONE {
-                    print("Successfully added routine to day \(day).")
+                    log(.info, "Successfully added routine to day \(day).")
                 } else {
-                    print("Error inserting data.")
+                    log(.error, "Error inserting data.")
                 }
             }
             sqlite3_finalize(statement)
@@ -1079,14 +1079,9 @@ class DatabaseManager {
             guard sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK else {
                 let errorMessage = String(cString: sqlite3_errmsg(db))
                 log(.error, "Failed to prepare routine query: \(errorMessage)")
-                return RoutineDto(
-                    id: 0,
-                    name: "None",
-                    description: "None",
-                    exerciseWithSetsDto: nil
-                )
+                return nil
             }
-
+            
             defer { sqlite3_finalize(statement) }
 
             // Bind values

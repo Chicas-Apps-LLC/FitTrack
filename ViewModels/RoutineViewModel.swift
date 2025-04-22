@@ -162,11 +162,17 @@ final class RoutineViewModel: ObservableObject {
         }
     }
     
-    func assignRoutineToDay(routine: RoutineDto, day: Int) {
-        guard (1...7).contains(day) else {
-            print("Error: Invalid day. Must be between 1 (Sunday) and 7 (Saturday).")
+    func assignRoutineToDay(routine: RoutineDto, date: Date) {
+        let calendar = Calendar.current
+        let weekday = calendar.component(.weekday, from: date)
+        guard (1...7).contains(weekday) else {
+            log(.error, "Error: Invalid weekday extracted from date.")
             return
-        }        
-        dm.addDayToRoutine(day: day, routineId: routine.id)
+        }
+        dm.addDayToRoutine(day: weekday, routineId: routine.id)
+    }
+    
+    func getRoutineByName(_ name: String) -> RoutineDto? {
+        return dm.getRoutineByName(name)
     }
 }

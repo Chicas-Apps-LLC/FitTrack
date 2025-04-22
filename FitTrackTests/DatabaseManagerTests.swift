@@ -58,8 +58,8 @@ final class DatabaseManagerTest: XCTestCase {
         
         if exercises.count > 0 {
             let firstExercise = exercises.first
-            XCTAssertNotNil(firstExercise.name, "Exercise name should not be nil")
-            XCTAssertTrue(firstExercise.name.lowercased().contains("squat"), "Exercise name should contain the keyword squat ")            
+            XCTAssertNotNil(firstExercise?.name, "Exercise name should not be nil")
+            XCTAssertTrue(((firstExercise?.name.lowercased().contains("squat")) != nil), "Exercise name should contain the keyword squat ")            
         }
         else {
             XCTFail("Query returned 0 exercises with squat")
@@ -232,7 +232,7 @@ final class DatabaseManagerTest: XCTestCase {
 
     func testRoutineHistory() {
         // Step 1: Create a test routine session
-        let testSession = RoutineHistoryDto()
+        var testSession = RoutineHistoryDto()
         testSession.routineId = 1
         testSession.userId = 123
         testSession.date = Date() // Use current date
