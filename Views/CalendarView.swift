@@ -14,6 +14,8 @@ struct CalendarView: View {
     @State private var navigateToExerciseList = false
     @State private var showRoutines = false
     @State private var selectedRoutine: RoutineDto? = nil
+    @State private var monthSlideOffset: CGFloat = 0
+
     
     @ObservedObject var routineViewModel: RoutineViewModel
 
@@ -71,6 +73,43 @@ struct CalendarView: View {
                 Spacer()
                 Text(monthYearString(from: currentDate))
                     .font(.headline)
+                    .offset(x: monthSlideOffset)
+                    .gesture(
+                        DragGesture()
+                            .onChanged { value in
+                                monthSlideOffset = value.translation.width
+                            }
+                            .onEnded { value in
+                                if value.translation.width < -50 {
+                                    withAnimation(.spring()) {
+                                        monthSlideOffset = -100
+                                    }
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        changeMonth(by: 1)
+                                        withAnimation(.spring()) {
+                                            monthSlideOffset = 0
+                                        }
+                                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                    }
+                                } else if value.translation.width > 50 {
+                                    withAnimation(.spring()) {
+                                        monthSlideOffset = 100
+                                    }
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        changeMonth(by: -1)
+                                        withAnimation(.spring()) {
+                                            monthSlideOffset = 0
+                                        }
+                                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                    }
+                                } else {
+                                    // Snap back if not enough swipe
+                                    withAnimation(.spring()) {
+                                        monthSlideOffset = 0
+                                    }
+                                }
+                            }
+                    )
                 Spacer()
                 Button(action: {
                     changeMonth(by: 1)
@@ -79,6 +118,7 @@ struct CalendarView: View {
                 }
             }
             .padding()
+            
             Button("Today") {
                 withAnimation(.easeInOut) {
                     currentDate = Date()
@@ -90,8 +130,8 @@ struct CalendarView: View {
             .background(AppColors.gray.opacity(0.2))
             .cornerRadius(6)
         }
-        
     }
+
 
     private var daysOfWeekHeader: some View {
         HStack {

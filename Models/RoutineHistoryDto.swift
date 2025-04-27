@@ -6,7 +6,7 @@
 //
 import Foundation
 
-struct RoutineHistoryDto: Identifiable {
+struct RoutineHistoryDto: Identifiable, Equatable {
     var id: Int?
     var routineId: Int?
     var userId: Int?
@@ -17,6 +17,10 @@ struct RoutineHistoryDto: Identifiable {
     var notes: String?
 
     var wrappedId: Int {
-        id ?? UUID().hashValue // Fallback for when id is nil
+        id ?? UUID().hashValue
+    }
+
+    static func == (lhs: RoutineHistoryDto, rhs: RoutineHistoryDto) -> Bool {
+        lhs.id == rhs.id
     }
 }

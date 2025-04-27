@@ -220,7 +220,9 @@ struct ExpandedProgressHistoryView: View {
                     .padding()
                     .background(RoundedRectangle(cornerRadius: 12)
                                     .fill(Color.white.opacity(0.2)))
+                    .transition(.move(edge: .top).combined(with: .opacity))
                 }
+                .animation(.spring(response: 0.5, dampingFraction: 0.7), value: pastSessions)
             }
         }
         .padding(.top, 5)
