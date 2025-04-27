@@ -191,7 +191,7 @@ final class DatabaseManagerTest: XCTestCase {
         XCTAssertTrue(saveSuccess, "Routine should be saved successfully for fetching test.")
 
         // Fetch all routines
-        let routines = DatabaseManager.shared.fetchAllRoutines()
+        let routines = DatabaseManager.shared.getAllRoutines()
         XCTAssertNotNil(routines, "Fetch all routines should return a non-nil array.")
         XCTAssertGreaterThan(routines.count, 0, "There should be at least one routine in the database.")
 
@@ -215,7 +215,7 @@ final class DatabaseManagerTest: XCTestCase {
         XCTAssertTrue(saveSuccess, "General Routine should be saved successfully.")
         
         // Step 3: Fetch the routine from the database to verify
-        let fetchedRoutines = DatabaseManager.shared.fetchAllRoutines()
+        let fetchedRoutines = DatabaseManager.shared.getAllRoutines()
         XCTAssertNotNil(fetchedRoutines, "Fetch routines should not return nil.")
         XCTAssertGreaterThanOrEqual(fetchedRoutines.count, 1, "There should be at least one routine in the database.")
         
@@ -242,7 +242,8 @@ final class DatabaseManagerTest: XCTestCase {
         testSession.notes = "Great workout session!"
 
         // Step 2: Insert the test session into the database
-        DatabaseManager.shared.createRoutineHistory(routineHistory: testSession)
+        let success = DatabaseManager.shared.saveRoutineHistoryToDb(routineHistory: testSession)
+        XCTAssertTrue(success, "Failed to save routine session into the database.")
         
         // Step 3: Fetch routine sessions for the same routineId
         let fetchedSessions = DatabaseManager.shared.getRoutineHistory(routineId: 1)
@@ -272,7 +273,7 @@ final class DatabaseManagerTest: XCTestCase {
     }
     
     func testRoutineDeletion() throws {
-        var routines = DatabaseManager.shared.fetchAllRoutines()
+        var routines = DatabaseManager.shared.getAllRoutines()
         
         if(routines.count < 1) {
             let routine = DatabaseManager.shared.createMainLiftOne(user: UserDto(userId: 9999, name: "Nala"))
@@ -281,7 +282,7 @@ final class DatabaseManagerTest: XCTestCase {
         }
         XCTAssertTrue(DatabaseManager.shared.deleteRoutine(routine: routines.first!), "Failed to delete routine")
         
-        let secondRoutines = DatabaseManager.shared.fetchAllRoutines()
+        let secondRoutines = DatabaseManager.shared.getAllRoutines()
         XCTAssertTrue(routines.count == secondRoutines.count + 1, "New routines list is not 1 less than previous routine list")
     }
     
@@ -303,7 +304,7 @@ final class DatabaseManagerTest: XCTestCase {
         
         DatabaseManager.shared.chooseAndCreateRoutines(user: user)
         
-        let routines = DatabaseManager.shared.fetchAllRoutines()
+        let routines = DatabaseManager.shared.getAllRoutines()
         XCTAssertNotNil(routines, "Failed to fetch routines")
         
         for routine in routines {

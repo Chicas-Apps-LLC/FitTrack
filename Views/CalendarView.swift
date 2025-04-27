@@ -13,7 +13,8 @@ struct CalendarView: View {
     @State private var selectedDate: Date? = nil
     @State private var navigateToExerciseList = false
     @State private var showRoutines = false
-
+    @State private var selectedRoutine: RoutineDto? = nil
+    
     @ObservedObject var routineViewModel: RoutineViewModel
 
     
@@ -50,6 +51,11 @@ struct CalendarView: View {
                 .padding(.bottom, 10)
             
             
+        }
+        .onAppear {
+            if selectedDate == nil {
+                selectedDate = Date()
+            }
         }
         .padding([.leading, .trailing, .top], 12)
     }
@@ -112,24 +118,27 @@ struct CalendarView: View {
                 Button(action: {
                     selectedDate = date
                 }) {
-                    VStack(spacing: 6) {
+                    VStack(spacing: 4) {
                         Text("\(calendar.component(.day, from: date))")
                             .font(.subheadline)
                             .foregroundColor(isSelected ? .white : .primary)
-                            .frame(maxWidth: .infinity, minHeight: 75)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(isSelected ? AppColors.primary : AppColors.primary.opacity(0.2))
-                            )
+                        
                         if hasRoutine {
                             Circle()
                                 .fill(AppColors.night)
                                 .frame(width: 6, height: 6)
+                        } else {
+                            // Reserve space to keep all cards same height
+                            Spacer().frame(height: 6)
                         }
                     }
-                    .frame(height: 75)
+                    .frame(maxWidth: .infinity, minHeight: 75)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(isSelected ? AppColors.primary : AppColors.primary.opacity(0.2))
+                    )
                 }
-                .buttonStyle(PlainButtonStyle()) // Prevent default blue tap style
+                .buttonStyle(PlainButtonStyle())
             }
         }
     }
@@ -185,13 +194,47 @@ struct CalendarView: View {
                     navigateToExerciseList = true
                 }
                 Button("Select Existing Routine") {
-                    
+                    showRoutines = true
                 }
                 Button("Cancel", role: .cancel) {}
             }
         }
+        .sheet(isPresented: $showRoutines) {
+            RoutinePickerView(
+                routines: routineViewModel.routines,
+                onSelect: { routine in
+                    selectedRoutine = routine
+                    routineViewModel.assignRoutineToDay(routine: routine, date: selectedDate!)
+                    showRoutines = false
+                }
+            )
+        }
     }
 }
+
+struct RoutinePickerView: View {
+    let routines: [RoutineDto]
+    let onSelect: (RoutineDto) -> Void
+
+    var body: some View {
+        NavigationView {
+            List(routines, id: \.id) { routine in
+                Button(action: {
+                    onSelect(routine)
+                }) {
+                    VStack(alignment: .leading) {
+                        Text(routine.name).font(.headline)
+                        if let desc = routine.description {
+                            Text(desc).font(.subheadline).foregroundColor(.gray)
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Select a Routine")
+        }
+    }
+}
+
 
 struct CalendarView_Previews: PreviewProvider {
     static var previews: some View {

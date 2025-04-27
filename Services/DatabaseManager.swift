@@ -921,7 +921,7 @@ class DatabaseManager {
         
     }
  
-    func createRoutineHistory(routineHistory: RoutineHistoryDto) {
+    func saveRoutineHistoryToDb(routineHistory: RoutineHistoryDto) -> Bool {
         performDatabaseTask {
             openDatabase()
             let query = """
@@ -935,7 +935,7 @@ class DatabaseManager {
             let prepareResult = sqlite3_prepare_v2(db, query, -1, &statement, nil)
             if prepareResult != SQLITE_OK {
                 log(.error, "Error preparing statement: \(String(cString: sqlite3_errmsg(db)))")
-                return
+                return false
             }
             
             defer { sqlite3_finalize(statement) } // Ensure statement is finalized
@@ -966,9 +966,12 @@ class DatabaseManager {
             let stepResult = sqlite3_step(statement)
             if stepResult != SQLITE_DONE {
                 log(.error, "Error inserting routine session: \(String(cString: sqlite3_errmsg(db)))")
+                return false
+                
             } else {
                 log(.info, "Routine session successfully inserted.")
             }
+            return true
         }
     }
     
@@ -999,7 +1002,7 @@ class DatabaseManager {
         }
     }
 
-    func fetchAllRoutines() -> [RoutineDto] {
+    func getAllRoutines() -> [RoutineDto] {
         return performDatabaseTask {
             openDatabase()
             var routines = [RoutineDto]()

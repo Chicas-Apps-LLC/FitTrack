@@ -45,7 +45,6 @@ struct RoutineView: View {
     }
 
     // MARK: - Subviews
-
     private var routineName: some View {
         Text(routine.name)
             .font(.system(size: 28, weight: .bold, design: .rounded))
@@ -158,15 +157,45 @@ struct RoutineView: View {
 
     private func toggleRoutine() {
         if isStarted {
+            // FINISHING WORKOUT
             timer?.invalidate()
             timer = nil
+            
+            let routineHistory = RoutineHistoryDto(
+                id: nil,
+                routineId: routine.id,
+                userId: nil, // Assuming viewModel holds the user's ID
+                date: Date(),
+                duration: Double(elapsedTime),
+                difficulty: nil,
+                caloriesBurnt: calculateCalories(),
+                notes: ""
+            )
+            
+            let success = viewModel.saveRoutineHistory(routineHistory: routineHistory)
+            if success {
+                log(.info, "Workout session saved successfully.")
+                pastSessions.insert(routineHistory, at: 0)
+            } else {
+                log(.error, "Failed to save workout session.")
+            }
+            
+            elapsedTime = 0 // Reset stopwatch
         } else {
+            // STARTING WORKOUT
             timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
                 elapsedTime += 1
             }
         }
         isStarted.toggle()
     }
+
+    
+    private func calculateCalories() -> Int {
+        let caloriesPerSecond = 0.12
+        return Int(Double(elapsedTime) * caloriesPerSecond)
+    }
+
 }
 
 struct ExpandedProgressHistoryView: View {

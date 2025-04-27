@@ -19,16 +19,16 @@ final class RoutineViewModel: ObservableObject {
         let baseName = "Generated routine"
         var routineName = baseName
         var number = 1
-
+        
         // Check for existing routines and increment the number until a unique name is found
         while dm.getRoutineByName(routineName) != nil {
-           number += 1
-           routineName = "\(baseName) \(number)"
+            number += 1
+            routineName = "\(baseName) \(number)"
         }
         
         let routine = dm.createGeneratedRoutine(name: routineName, user: user)
         let success = dm.saveRoutineWithExercisesToDb(routine)
-                
+        
         if success {
             log(.info, "Routine created and saved successfully.")
             loadAllRoutines()
@@ -72,7 +72,7 @@ final class RoutineViewModel: ObservableObject {
         // Reload routines to reflect changes
         loadAllRoutines()
     }
-
+    
     func createRoutinesBasedOnGoal(user: UserDto) {
         log(.info, "Creating routines based on \(user.name)'s goals...")
         
@@ -81,7 +81,7 @@ final class RoutineViewModel: ObservableObject {
     }
     func loadAllRoutines() {
         DispatchQueue.global(qos: .background).async {
-            let allRoutines = DatabaseManager.shared.fetchAllRoutines()
+            let allRoutines = DatabaseManager.shared.getAllRoutines()
             let filteredRoutines = allRoutines.filter { !$0.name.isEmpty }
             log(.info, "Filtered routines count: \(filteredRoutines.count)")
             
@@ -103,7 +103,7 @@ final class RoutineViewModel: ObservableObject {
             log(.error, "Error deleting \(routine.name)")
             return
         }
-
+        
         log(.info, "\(routine.name) deleted successfully.")
         loadAllRoutines()
     }
@@ -112,8 +112,8 @@ final class RoutineViewModel: ObservableObject {
         return dm.getRoutineHistory(routineId: routineId)
     }
     
-    func getRoutineHistoryFromDb(routineId: Int) -> [RoutineHistoryDto] {
-        return dm.getRoutineHistory(routineId: routineId)
+    func getListOfRoutines() -> [RoutineDto] {
+        return dm.getAllRoutines()
     }
     
     func getRoutinesForDay(day: Int) -> [RoutineDto] {
@@ -131,6 +131,10 @@ final class RoutineViewModel: ObservableObject {
     
     func saveRoutine(routine: RoutineDto) -> Bool{
         return dm.saveRoutineWithExercisesToDb(routine)
+    }
+    
+    func saveRoutineHistory(routineHistory: RoutineHistoryDto) -> Bool {
+        return dm.saveRoutineHistoryToDb(routineHistory: routineHistory)
     }
     
     func calculateRoutineSchedule(routines: [RoutineDto], daysInGym: Int) {
