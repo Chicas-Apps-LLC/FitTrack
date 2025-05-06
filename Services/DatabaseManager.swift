@@ -1001,6 +1001,25 @@ class DatabaseManager {
             closeDatabase()
         }
     }
+    
+    func toggleFavoriteRoutine(routine: RoutineDto) {
+        return performDatabaseTask {
+            openDatabase()
+            var newValue = routine.isFavorite ?? false ? 0 : 1
+            let query = "UPDATE Routines SET is_favorite = ? WHERE routine_id = ?"
+            var statement: OpaquePointer?
+            
+            if sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK {
+                sqlite3_bind_int(statement, 1, Int32(newValue))
+                sqlite3_bind_int(statement, 2, Int32(routine.id))
+                sqlite3_step(statement)
+            } else {
+                log(.error, "Failed to update routine favorite status: \(String(cString: sqlite3_errmsg(db)!))")
+            }
+            log(.info, "Updated favorite status for routine \(routine.id)")
+            sqlite3_finalize(statement)            
+        }
+    }
 
     func getAllRoutines() -> [RoutineDto] {
         return performDatabaseTask {
