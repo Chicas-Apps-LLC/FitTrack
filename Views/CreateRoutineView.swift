@@ -82,7 +82,7 @@ struct CreateRoutineView: View {
         let routine = RoutineDto(
             id: 0,
             name: routineName,
-            description: routineDescription,
+            description: routineDescription, isFavorite: false,
             exerciseWithSetsDto: exercises
         )
 

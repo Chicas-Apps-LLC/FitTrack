@@ -247,7 +247,7 @@ struct ExpandedProgressHistoryView: View {
     RoutineView(routine: RoutineDto(
         id: 1,
         name: "Leg Routine",
-        description: "A mix of upper and lower body exercises.",
+        description: "A mix of upper and lower body exercises.", isFavorite: false,
         exerciseWithSetsDto: [
             ExerciseWithSetsDto(
                 exercise: ExerciseDto(

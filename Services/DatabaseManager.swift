@@ -195,7 +195,7 @@ class DatabaseManager {
         return RoutineDto(
             id: routineID,
             name: name,
-            description: description,
+            description: description, isFavorite: false,
             exerciseWithSetsDto: exercisesWithSets
         )
     }
@@ -807,7 +807,7 @@ class DatabaseManager {
         
         guard !exercises.isEmpty else {
             log(.warning, "No bodyweight exercises found.")
-            return RoutineDto(id: 0, name: "Bodyweight Routine", description: "No exercises found", exerciseWithSetsDto: [])
+            return RoutineDto(id: 0, name: "Bodyweight Routine", description: "No exercises found", isFavorite: false, exerciseWithSetsDto: [])
         }
         let selectedExercises = exercises.count > 5 ? Array(exercises.shuffled().prefix(5)) : exercises
         
@@ -820,7 +820,7 @@ class DatabaseManager {
         return RoutineDto(
             id: Int.random(in: 1000...9999),
             name: "Bodyweight Routine",
-            description: "A bodyweight-only workout routine.",
+            description: "A bodyweight-only workout routine.", isFavorite: false,
             exerciseWithSetsDto: exercisesWithSets
         )
     }
@@ -859,7 +859,7 @@ class DatabaseManager {
         let cstRoutine = RoutineDto(
             id: 1,
             name: "Chest/Shoulders/Triceps",
-            description: "Strength routine for CST",
+            description: "Strength routine for CST", isFavorite: false,
             exerciseWithSetsDto: cstExercises.map { ExerciseWithSetsDto(exercise: $0, sets: createSetsRepsAndWeight(user: user) ?? []) }
         )
 
@@ -874,7 +874,7 @@ class DatabaseManager {
         let qcRoutine = RoutineDto(
             id: 2,
             name: "Quads/Calves",
-            description: "Strength routine for quads and calves",
+            description: "Strength routine for quads and calves", isFavorite: false,
             exerciseWithSetsDto: qcExercises.map { ExerciseWithSetsDto(exercise: $0, sets: createSetsRepsAndWeight(user: user) ?? []) }
         )
 
@@ -895,7 +895,7 @@ class DatabaseManager {
         let bbRoutine = RoutineDto(
             id: 3,
             name: "Back/Biceps",
-            description: "Strength routine for back and biceps",
+            description: "Strength routine for back and biceps", isFavorite: false,
             exerciseWithSetsDto: bbExercises.map { ExerciseWithSetsDto(exercise: $0, sets: createSetsRepsAndWeight(user: user) ?? []) }
         )
 
@@ -910,7 +910,7 @@ class DatabaseManager {
         let hgRoutine = RoutineDto(
             id: 4,
             name: "Hamstrings/Glutes",
-            description: "Strength routine for hamstrings and glutes",
+            description: "Strength routine for hamstrings and glutes", isFavorite: false,
             exerciseWithSetsDto: hgExercises.map { ExerciseWithSetsDto(exercise: $0, sets: createSetsRepsAndWeight(user: user) ?? []) }
         )
         return [cstRoutine, qcRoutine, bbRoutine, hgRoutine]
@@ -1005,13 +1005,13 @@ class DatabaseManager {
     func toggleFavoriteRoutine(routine: RoutineDto) {
         return performDatabaseTask {
             openDatabase()
-            var newValue = routine.isFavorite ?? false ? 0 : 1
-            let query = "UPDATE Routines SET is_favorite = ? WHERE routine_id = ?"
+            let newValue = routine.isFavorite ? 0 : 1
+            let query = "UPDATE Routines SET is_favorite = ? WHERE name = ?"
             var statement: OpaquePointer?
             
             if sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK {
                 sqlite3_bind_int(statement, 1, Int32(newValue))
-                sqlite3_bind_int(statement, 2, Int32(routine.id))
+                sqlite3_bind_text(statement, 2, routine.name, -1, SQLITE_TRANSIENT)
                 sqlite3_step(statement)
             } else {
                 log(.error, "Failed to update routine favorite status: \(String(cString: sqlite3_errmsg(db)!))")
@@ -1038,7 +1038,7 @@ class DatabaseManager {
                     let descriptionPointer = sqlite3_column_text(statement, 2)
                     let description = descriptionPointer != nil ? String(cString: descriptionPointer!) : "NULL_OR_EMPTY"
                     log(.info, "Finished fetching routine with id: \(id)")
-                    routines.append(RoutineDto(id: Int(id), name: name, description: description, exerciseWithSetsDto: nil))
+                    routines.append(RoutineDto(id: Int(id), name: name, description: description, isFavorite: false, exerciseWithSetsDto: nil))
                 }
                 log(.info, "Total routines: \(routines.count)")
             } else {
@@ -1062,7 +1062,7 @@ class DatabaseManager {
                 return RoutineDto(
                     id: 0,
                     name: "None",
-                    description: "None",
+                    description: "None", isFavorite: false,
                     exerciseWithSetsDto: nil
                 )
             }
@@ -1081,7 +1081,7 @@ class DatabaseManager {
                 return RoutineDto(
                     id: Int(routineId),
                     name: routineName,
-                    description: routineDescription,
+                    description: routineDescription, isFavorite: false,
                     exerciseWithSetsDto: nil
                 )
             } else {
@@ -1113,18 +1113,19 @@ class DatabaseManager {
                 let routineId = sqlite3_column_int(statement, 0)
                 let routineName = String(cString: sqlite3_column_text(statement, 1))
                 let routineDescription = sqlite3_column_text(statement, 2).flatMap { String(cString: $0) }
+                let isFavoriteValue = sqlite3_column_int(statement, 3) == 1
 
                 log(.info, "Routine retrieved successfully: \(routineName)")
                 return RoutineDto(
                     id: Int(routineId),
                     name: routineName,
                     description: routineDescription,
+                    isFavorite: isFavoriteValue,
                     exerciseWithSetsDto: nil
                 )
             } else {
                 log(.warning, "No routine found with name \(name)")
             }
-
             return nil
         }
     }

@@ -18,10 +18,21 @@ final class UserViewModel: ObservableObject {
     @Published var validationErrors: [String] = []
     @Published var userSetupFinished = false
     
-    func isSetupComplete() -> Bool {
-        log(.info, "the user is currently: \(String(describing: user?.name))")
-        return self.userSetupFinished
+    func isSetupComplete() -> String {
+        if self.user?.name == nil {
+            return "StartingView"
+        }
+        else if self.user?.currentStats.currentWeight == nil {
+            return "CurrentStatsView"
+        }
+        else if self.user?.goals.goalWeight == nil {
+            return "GoalsView"
+        }
+        else {
+            return "MainView"
+        }
     }
+    
     
     func loadFirstUser() {
         log(.info, "Attempting to fetch the first user from the database.")

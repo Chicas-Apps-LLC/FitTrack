@@ -346,7 +346,7 @@ struct ExerciseView_Previews: PreviewProvider {
         let sampleRoutine = RoutineDto(
             id: 1,
             name: "Full Body Strength",
-            description: "A routine focusing on overall strength.",
+            description: "A routine focusing on overall strength.", isFavorite: false,
             exerciseWithSetsDto: sampleExercises
         )
 

@@ -10,6 +10,6 @@ struct RoutineDto: Identifiable {
     var id: Int
     var name: String
     var description: String?
-    var isFavorite: Bool?
+    var isFavorite: Bool
     var exerciseWithSetsDto: [ExerciseWithSetsDto]?
 }

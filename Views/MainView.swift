@@ -127,9 +127,9 @@ struct RoutineSelectorView_Previews: PreviewProvider {
     static var mockRoutineViewModel: RoutineViewModel {
         let routineViewModel = RoutineViewModel()
         routineViewModel.routines = [
-            RoutineDto(id: 1, name: "Strength Routine", description: "Build muscle strength", exerciseWithSetsDto: []),
-            RoutineDto(id: 2, name: "Weight Loss Routine", description: "Lose weight and tone up", exerciseWithSetsDto: []),
-            RoutineDto(id: 3, name: "Cardio Routine", description: "Improve cardiovascular health", exerciseWithSetsDto: [])
+            RoutineDto(id: 1, name: "Strength Routine", description: "Build muscle strength", isFavorite: false, exerciseWithSetsDto: []),
+            RoutineDto(id: 2, name: "Weight Loss Routine", description: "Lose weight and tone up", isFavorite: false, exerciseWithSetsDto: []),
+            RoutineDto(id: 3, name: "Cardio Routine", description: "Improve cardiovascular health", isFavorite: false, exerciseWithSetsDto: [])
         ]
         return routineViewModel
     }

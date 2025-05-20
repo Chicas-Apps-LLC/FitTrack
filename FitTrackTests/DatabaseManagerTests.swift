@@ -143,7 +143,7 @@ final class DatabaseManagerTest: XCTestCase {
         let routine = RoutineDto(
             id: 0, // Use an unlikely ID to avoid conflicts
             name: "Test Routine",
-            description: "This routine is simply for testing purposes",
+            description: "This routine is simply for testing purposes", isFavorite: false,
             exerciseWithSetsDto: [exericsesWithSets]
         )
 
@@ -185,6 +185,7 @@ final class DatabaseManagerTest: XCTestCase {
             id: 0,
             name: "Test Routine Fetch",
             description: "Testing fetch function",
+            isFavorite: false,
             exerciseWithSetsDto: [testExerciseWithSets]
         )
         let saveSuccess = DatabaseManager.shared.saveRoutineWithExercisesToDb(routine)
@@ -332,6 +333,39 @@ final class DatabaseManagerTest: XCTestCase {
         XCTAssertEqual(2, DatabaseManager.shared.getRoutinesForDay(day: 3).count)
     }
     
+    func testFavoriteToggle() throws {
+        let testExercise = ExerciseDto(
+            id: Int.random(in: 1...1000), // Random ID for uniqueness
+            name: "Test Exercise",
+            description: "A test exercise description",
+            level: "Beginner",
+            instructions: "Perform the exercise correctly.",
+            equipmentNeeded: false,
+            overloading: false,
+            powerStrengthSupplement: nil,
+            isolationCompoundAccessory: "Compound",
+            pushPullLegs: "Push",
+            verticalHorizontalRotational: "Vertical",
+            stretch: false,
+            videoURL: nil
+        )
+
+        let testSets = [
+            SetsDto(setNumber: 1, reps: 10, weight: 50.0),
+            SetsDto(setNumber: 2, reps: 8, weight: 55.0),
+            SetsDto(setNumber: 3, reps: 6, weight: 60.0)
+        ]
+
+        let testExerciseWithSets = ExerciseWithSetsDto(exercise: testExercise, sets: testSets)
+        
+        let routine = RoutineDto(id: 1, name: "RoutineTest", description: "Just a test routine", isFavorite: false, exerciseWithSetsDto: [testExerciseWithSets])
+        
+        XCTAssertTrue(DatabaseManager.shared.saveRoutineWithExercisesToDb(routine), "Failed to save routine to db")
+        
+        DatabaseManager.shared.toggleFavoriteRoutine(routine: routine)
+        let fetchedRoutine = DatabaseManager.shared.getRoutineByName("RoutineTest")
+        XCTAssertTrue(fetchedRoutine?.isFavorite == true, "Favorite toggle failed. currerntly: \(String(describing: fetchedRoutine?.isFavorite))")
+    }
     /*
      User Tests
      */
