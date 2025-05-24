@@ -9,10 +9,22 @@ import SwiftUI
 
 struct MainView: View {
     @EnvironmentObject var userViewModel: UserViewModel
-    @StateObject private var routineViewModel = RoutineViewModel()
+    @StateObject private var internalRoutineVM = RoutineViewModel()
     @State private var flippedStates: [Bool] = []
     @State private var scrollOffset: CGFloat = 0
+    @State private var isEditing: Bool = false
 
+    
+    private var externalRoutineVM: RoutineViewModel?
+    
+    private var routineViewModel: RoutineViewModel {
+        externalRoutineVM ?? internalRoutineVM
+    }
+    
+    init(routineViewModel: RoutineViewModel? = nil) {
+        self.externalRoutineVM = routineViewModel
+    }
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -45,12 +57,33 @@ struct MainView: View {
                         .padding()
                     }
 
-                    Text("Select a Routine")
-                        .font(.system(size: 28, weight: .bold))
-                        .fontWeight(.bold)
-                        .foregroundColor(AppColors.light)
-                        .padding(.top)
+                    VStack(alignment: .leading) {
+                        Text("Select a Routine")
+                            .font(.system(size: 28, weight: .bold))
+                            .fontWeight(.bold)
+                            .foregroundColor(AppColors.light)
+                            .frame(maxWidth: .infinity, alignment: .center) // center the title
 
+                        HStack {
+                            Spacer()
+                            Button(action: {
+                                isEditing.toggle()
+                                // Optionally trigger edit mode behavior here
+                            }) {
+                                Text(isEditing ? "Done" : "Edit")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .padding(.horizontal, 40)
+                                    .padding(.vertical, 10)
+                                    .background(AppColors.secondary)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(10)
+                                    .shadow(color: AppColors.night.opacity(0.2), radius: 4, x: 0, y: 2)
+                            }
+                        }
+                    }
+                    .padding(.top)
+
+                    
                     if routineViewModel.routines.isEmpty {
                         Text("No routines available")
                             .foregroundColor(AppColors.night)
@@ -59,7 +92,7 @@ struct MainView: View {
                         ScrollView(.horizontal, showsIndicators: false) {
                             LazyHStack(spacing: 20) {
                                 ForEach(routineViewModel.routines, id: \.id) { routine in
-                                    RoutineCardView(routine: routine, viewModel: routineViewModel)
+                                    RoutineCardView(routine: routine, viewModel: routineViewModel, isEditing: isEditing)
                                         .frame(width: 200, height: 350)
                                         .background(Color.white)
                                         .cornerRadius(15)
@@ -111,7 +144,7 @@ struct MainView: View {
 
 struct RoutineSelectorView_Previews: PreviewProvider {
     static var previews: some View {
-        MainView()
+        MainView(routineViewModel: mockRoutineViewModel)
             .environmentObject(mockUserViewModel)
             .environmentObject(mockRoutineViewModel)
     }

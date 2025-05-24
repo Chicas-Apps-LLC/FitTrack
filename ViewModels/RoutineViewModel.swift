@@ -179,4 +179,22 @@ final class RoutineViewModel: ObservableObject {
     func getRoutineByName(_ name: String) -> RoutineDto? {
         return dm.getRoutineByName(name)
     }
+    
+    func toggleFavorite(routine: RoutineDto) {
+        if dm.toggleFavoriteRoutine(routine: routine) {
+            if let index = routines.firstIndex(where: { $0.id == routine.id }) {
+                let updatedRoutine = dm.getRoutineById(id: routine.id)
+                if let updated = updatedRoutine {
+                    routines[index] = updated
+                }
+            }
+        }
+        else {
+            log(.error, "Failed to toggle favorite in DB; skipping in-memory toggle.")
+        }
+    }
+    
+    func getFavoriteRoutines() -> [RoutineDto] {
+        return dm.getFavoriteRoutines()
+    }
 }

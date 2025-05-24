@@ -1002,7 +1002,7 @@ class DatabaseManager {
         }
     }
     
-    func toggleFavoriteRoutine(routine: RoutineDto) {
+    func toggleFavoriteRoutine(routine: RoutineDto) -> Bool {
         return performDatabaseTask {
             openDatabase()
             let newValue = routine.isFavorite ? 0 : 1
@@ -1015,9 +1015,11 @@ class DatabaseManager {
                 sqlite3_step(statement)
             } else {
                 log(.error, "Failed to update routine favorite status: \(String(cString: sqlite3_errmsg(db)!))")
+                return false
             }
             log(.info, "Updated favorite status for routine \(routine.id)")
-            sqlite3_finalize(statement)            
+            sqlite3_finalize(statement)
+            return true
         }
     }
 
@@ -1127,6 +1129,42 @@ class DatabaseManager {
                 log(.warning, "No routine found with name \(name)")
             }
             return nil
+        }
+    }
+    
+    func getFavoriteRoutines() -> [RoutineDto] {
+        return performDatabaseTask {
+            openDatabase()
+            var favoriteRoutines = [RoutineDto]()
+            let query = """
+                SELECT routine_id, name, description
+                FROM Routines
+                WHERE is_favorite = 1;
+            """
+            
+            var statement: OpaquePointer?
+            
+            if sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK {
+                while sqlite3_step(statement) == SQLITE_ROW {
+                    let routineId = Int(sqlite3_column_int(statement, 0))
+                    
+                    guard let nameCStr = sqlite3_column_text(statement, 1),
+                          let descCStr = sqlite3_column_text(statement, 2) else {
+                        continue
+                    }
+                    
+                    let name = String(cString: nameCStr)
+                    let description = String(cString: descCStr)
+                    
+                    let routine = RoutineDto(id: routineId, name: name, description: description, isFavorite: true)
+                    favoriteRoutines.append(routine)
+                }
+            } else {
+                print("Failed to prepare statement: \(String(cString: sqlite3_errmsg(db)))")
+            }
+
+            sqlite3_finalize(statement)
+            return favoriteRoutines
         }
     }
     

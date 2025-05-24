@@ -10,6 +10,7 @@ import SwiftUI
 struct RoutineCardView: View {
     var routine: RoutineDto
     @ObservedObject var viewModel: RoutineViewModel
+    var isEditing: Bool
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -65,16 +66,62 @@ struct RoutineCardView: View {
             .cornerRadius(15)
             .shadow(color: .gray.opacity(0.1), radius: 5, x: 0, y: 2)
 
-            // Red X button
             Button(action: {
-                viewModel.deleteRoutine(routine: routine)
+                viewModel.toggleFavorite(routine: routine)
             }) {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(AppColors.red)
+                Image(systemName: routine.isFavorite ? "star.fill" : "star")
+                    .foregroundColor(routine.isFavorite ? AppColors.secondary : AppColors.gray)
                     .font(.title)
                     .padding(10)
             }
-            .offset(x: -10, y: 10) // Ensures consistent positioning
+            .offset(x: -10, y: 10)
+            
+            if isEditing {
+                Button(action: {
+                    viewModel.deleteRoutine(routine: routine)
+                }) {
+                    Image(systemName: "trash")
+                        .foregroundColor(.red)
+                        .padding(10)
+                        .background(Color.white)
+                        .clipShape(Circle())
+                        .shadow(radius: 3)
+                }
+                .offset(x: -10, y: 60)
+            }
         }
+    }
+}
+
+struct RoutineCardView_Previews: PreviewProvider {
+    static var previews: some View {
+        let mockViewModel = RoutineViewModel()
+        let mockRoutine = RoutineDto(
+            id: 1,
+            name: "Full Body Blast",
+            isFavorite: false,
+            exerciseWithSetsDto: [
+                ExerciseWithSetsDto(
+                    exercise: ExerciseDto(id: 1, name: "Push Up", description: "Chest", level: nil, instructions: nil, equipmentNeeded: false, overloading: false, powerStrengthSupplement: nil, isolationCompoundAccessory: nil, pushPullLegs: nil, verticalHorizontalRotational: nil, stretch: nil, videoURL: nil),
+                    sets: []
+                ),
+                ExerciseWithSetsDto(
+                    exercise: ExerciseDto(id: 2, name: "Squat", description: "Legs", level: nil, instructions: nil, equipmentNeeded: false, overloading: false, powerStrengthSupplement: nil, isolationCompoundAccessory: nil, pushPullLegs: nil, verticalHorizontalRotational: nil, stretch: nil, videoURL: nil),
+                    sets: []
+                ),
+                ExerciseWithSetsDto(
+                    exercise: ExerciseDto(id: 3, name: "Plank", description: "Core", level: nil, instructions: nil, equipmentNeeded: false, overloading: false, powerStrengthSupplement: nil, isolationCompoundAccessory: nil, pushPullLegs: nil, verticalHorizontalRotational: nil, stretch: nil, videoURL: nil),
+                    sets: []
+                ),
+                ExerciseWithSetsDto(
+                    exercise: ExerciseDto(id: 4, name: "Lunges", description: "Legs", level: nil, instructions: nil, equipmentNeeded: false, overloading: false, powerStrengthSupplement: nil, isolationCompoundAccessory: nil, pushPullLegs: nil, verticalHorizontalRotational: nil, stretch: nil, videoURL: nil),
+                    sets: []
+                )
+            ]
+        )
+        return RoutineCardView(routine: mockRoutine, viewModel: mockViewModel, isEditing: true)
+            .frame(width: 200, height: 350)
+            .previewLayout(.sizeThatFits)
+            .padding()
     }
 }
