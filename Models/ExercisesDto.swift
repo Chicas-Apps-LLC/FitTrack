@@ -23,3 +23,20 @@ struct ExerciseDto: Identifiable {
     let videoURL: String?
 }
 
+extension ExerciseDto {
+    init(id: Int, name: String, description: String) {
+        self.id = id
+        self.name = name
+        self.description = description
+        self.level = nil
+        self.instructions = nil
+        self.equipmentNeeded = nil
+        self.overloading = nil
+        self.powerStrengthSupplement = nil
+        self.isolationCompoundAccessory = nil
+        self.pushPullLegs = nil
+        self.verticalHorizontalRotational = nil
+        self.stretch = nil
+        self.videoURL = nil
+    }
+}

@@ -1,0 +1,73 @@
+
+RoutineDto(
+    id: 1,
+    name: "Test Routine 1", description: "This routine is just for testing", isFavorite: false, exerciseWithSetsDto: [])
+
+ExerciseWithSetsDto(
+    exercise: ExerciseDto(
+        id: 1,
+        name: "Barbell Squat",
+        description: "A compound lower-body exercise that targets the quads, hamstrings, and glutes.",
+        level: "Intermediate",
+        instructions: "Keep your back straight and squat to parallel.",
+        equipmentNeeded: true,
+        overloading: true,
+        powerStrengthSupplement: "Strength",
+        isolationCompoundAccessory: "Compound",
+        pushPullLegs: "Legs",
+        verticalHorizontalRotational: "Vertical",
+        stretch: false,
+        videoURL: "https://example.com/barbell-squat"
+    ),
+    sets: [
+        SetsDto(setNumber: 1, reps: 8, weight: 100.0),
+        SetsDto(setNumber: 2, reps: 8, weight: 105.0),
+        SetsDto(setNumber: 3, reps: 6, weight: 110.0)
+    ]
+)
+
+ExerciseWithSetsDto(
+    exercise: ExerciseDto(
+        id: 2,
+        name: "Pull-Up",
+        description: "A bodyweight exercise targeting the upper back and biceps.",
+        level: "Advanced",
+        instructions: "Pull yourself up until your chin clears the bar.",
+        equipmentNeeded: true,
+        overloading: false,
+        powerStrengthSupplement: "Power",
+        isolationCompoundAccessory: "Compound",
+        pushPullLegs: "Pull",
+        verticalHorizontalRotational: "Vertical",
+        stretch: false,
+        videoURL: "https://example.com/pull-up"
+    ),
+    sets: [
+        SetsDto(setNumber: 1, reps: 10, weight: 0.0),
+        SetsDto(setNumber: 2, reps: 8, weight: 0.0),
+        SetsDto(setNumber: 3, reps: 6, weight: 0.0)
+    ]
+)
+
+ExerciseWithSetsDto(
+    exercise: ExerciseDto(
+        id: 3,
+        name: "Dumbbell Shoulder Press",
+        description: "Overhead press using dumbbells, targeting the shoulders and triceps.",
+        level: "Beginner",
+        instructions: "Press dumbbells overhead without locking out the elbows.",
+        equipmentNeeded: true,
+        overloading: true,
+        powerStrengthSupplement: "Supplement",
+        isolationCompoundAccessory: "Accessory",
+        pushPullLegs: "Push",
+        verticalHorizontalRotational: "Vertical",
+        stretch: false,
+        videoURL: "https://example.com/dumbbell-shoulder-press"
+    ),
+    sets: [
+        SetsDto(setNumber: 1, reps: 12, weight: 25.0),
+        SetsDto(setNumber: 2, reps: 10, weight: 27.5),
+        SetsDto(setNumber: 3, reps: 8, weight: 30.0)
+    ]
+)

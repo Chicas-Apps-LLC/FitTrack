@@ -13,12 +13,12 @@ struct GoalsView: View {
     // MARK: - State Variables
     @State private var weightString = ""
     @State private var daysWorkingOutString = ""
-    @State private var goal = "Strength"
+    @State private var goal = ""
     @State private var showContent = false  // For animation effect
     @StateObject private var routineViewModel = RoutineViewModel()
+    @State private var selectedGoal: FitnessGoal?
     
     // MARK: - Constants
-    let fitnessGoals = ["Strength", "Weight Loss", "Cardio"]
     let minWeight = 50
     let maxWeight = 500
     let primaryColor = AppColors.primary
@@ -27,6 +27,8 @@ struct GoalsView: View {
     private var weight: Int? { Int(weightString) }
     private var daysWorkingOut: Int? { Int(daysWorkingOutString) }
 
+    let fitnessGoals = FitnessGoal.allCases
+    
     private var isWeightValid: Bool {
         if let weight = weight {
             return weight >= minWeight && weight <= maxWeight
@@ -40,9 +42,13 @@ struct GoalsView: View {
         }
         return false
     }
+    
+    private var isGoalValid: Bool {
+        !goal.isEmpty
+    }
 
     private var isFormValid: Bool {
-        isWeightValid && isDaysWorkingOutValid
+        isWeightValid && isDaysWorkingOutValid && isGoalValid
     }
 
     var body: some View {
@@ -57,7 +63,7 @@ struct GoalsView: View {
                 .ignoresSafeArea()
 
                 ScrollView {
-                    VStack(spacing: 65) {
+                    VStack(spacing: 45) {
                         Spacer()
                         // Title
                         Text("Set Your Goals")
@@ -66,12 +72,12 @@ struct GoalsView: View {
                             .opacity(showContent ? 1 : 0)
                             .animation(.easeIn(duration: 0.8), value: showContent)
 
-                        Spacer()
                         // Form Container
-                        VStack(spacing: 20) {
+                        VStack() {
                             inputField(title: "Goal Weight (lbs)", text: $weightString, isValid: isWeightValid, validationMessage: "Weight must be between \(minWeight) and \(maxWeight) lbs.")
                             inputField(title: "Goal Days in Gym per Week", text: $daysWorkingOutString, isValid: isDaysWorkingOutValid, validationMessage: "Days must be between 1 and 7.")
-                            goalPicker
+                            goalGridPicker
+                            
                         }
                         .padding()
                         .background(AppColors.light.opacity(0.2))
@@ -81,8 +87,13 @@ struct GoalsView: View {
                         .opacity(showContent ? 1 : 0)
                         .animation(.easeIn(duration: 1.0), value: showContent)
 
-                        Spacer()
-                        // Finish Button
+                        if let selectedGoal {
+                            Text(selectedGoal.description)
+                                .font(.subheadline)
+                                .foregroundColor(.white)
+                                .padding(.horizontal)
+                        }
+                        
                         NavigationLink(destination: MainView().environmentObject(userViewModel)) {
                             Text("Finish")
                                 .font(.system(size: 18, weight: .bold, design: .rounded))
@@ -107,7 +118,6 @@ struct GoalsView: View {
                         .opacity(showContent ? 1 : 0)
                         .animation(.easeIn(duration: 1.2), value: showContent)
                     }
-                    .padding(.top, 40)
                 }
             }
             .onAppear {
@@ -116,23 +126,29 @@ struct GoalsView: View {
         }
     }
     
-    // MARK: - Subviews
-    private var goalPicker: some View {
-        VStack {
+    private var goalGridPicker: some View {
+        VStack(alignment: .leading, spacing: 10) {
             Text("Select Goal")
                 .font(.headline)
                 .foregroundColor(.white)
-            
-            Picker("Fitness Goal", selection: $goal) {
-                ForEach(fitnessGoals, id: \.self) {
-                    Text($0)
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(.black)
+                .padding(.horizontal)
+                .padding(10)
+                .frame(maxWidth: .infinity, alignment: .center)
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))], spacing: 15) {
+                ForEach(fitnessGoals) { goal in
+                    Button(action: {
+                        selectedGoal = selectedGoal == goal ? nil : goal
+                    }) {
+                        Text(goal.rawValue)
+                            .fontWeight(.medium)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(selectedGoal == goal ? AppColors.primary : AppColors.gray.opacity(0.3))
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                    }
                 }
             }
-            .pickerStyle(SegmentedPickerStyle())
-            .background(Color.white.opacity(0.2))
-            .cornerRadius(12)
             .padding(.horizontal)
         }
     }
@@ -163,6 +179,46 @@ struct GoalsView: View {
                     .foregroundColor(.red)
                     .padding(.leading)
             }
+        }
+    }
+}
+
+enum FitnessGoal: String, CaseIterable, Identifiable {
+    case strength = "Strength"
+    case weightLoss = "Weight Loss"
+    case cardio = "Cardio"
+    case bodybuilding = "Body building"
+    case flexibility = "Flexibility"
+    case endurance = "Endurance"
+    case football = "Football"
+    case basketball = "Basketball"
+    case soccer = "Soccer"
+    case track = "Track"
+
+    var id: String { rawValue }
+
+    var description: String {
+        switch self {
+        case .strength:
+            return "Increase muscle power and overall body strength."
+        case .weightLoss:
+            return "Burn fat and achieve a leaner physique."
+        case .cardio:
+            return "Boost cardiovascular health and endurance."
+        case .bodybuilding:
+            return "Build significant muscle mass and improve physique."
+        case .flexibility:
+            return "Improve joint mobility, reduce injury risk, and enhance range of motion."
+        case .endurance:
+            return "Build long-term stamina for extended physical activity."
+        case .football:
+            return "Enhance explosive power, agility, and team-based coordination."
+        case .basketball:
+            return "Improve vertical jump, speed, and court agility."
+        case .soccer:
+            return "Increase footwork, endurance, and lower-body strength."
+        case .track:
+            return "Optimize sprinting or distance performance with explosive training."
         }
     }
 }

@@ -91,7 +91,8 @@ struct MainView: View {
                     } else {
                         ScrollView(.horizontal, showsIndicators: false) {
                             LazyHStack(spacing: 20) {
-                                ForEach(routineViewModel.routines, id: \.id) { routine in
+                                ForEach(Array(routineViewModel.routines.enumerated()), id: \.element.id) { index, _ in
+                                    let routine = routineViewModel.routines[index]
                                     RoutineCardView(routine: routine, viewModel: routineViewModel, isEditing: isEditing)
                                         .frame(width: 200, height: 350)
                                         .background(Color.white)
@@ -104,7 +105,6 @@ struct MainView: View {
                     }
 
                     HStack(spacing: 10) {
-                        // "Create Routine" Button
                         NavigationLink(destination: ExercisesListView()) {
                             Text("Create Routine")
                                 .font(.system(size: 18, weight: .bold))
@@ -130,7 +130,7 @@ struct MainView: View {
                 .padding(.horizontal)
                 .onAppear {
                     routineViewModel.loadAllRoutines()
-                    userViewModel.loadFirstUser() // Ensure user is loaded
+                    userViewModel.loadFirstUser()
                 }
             }
         }
@@ -159,10 +159,32 @@ struct RoutineSelectorView_Previews: PreviewProvider {
     // Mock RoutineViewModel
     static var mockRoutineViewModel: RoutineViewModel {
         let routineViewModel = RoutineViewModel()
+        let exercises = ExerciseWithSetsDto(
+            exercise: ExerciseDto(
+                id: 1,
+                name: "Barbell Squat",
+                description: "A compound lower-body exercise that targets the quads, hamstrings, and glutes.",
+                level: "Intermediate",
+                instructions: "Keep your back straight and squat to parallel.",
+                equipmentNeeded: true,
+                overloading: true,
+                powerStrengthSupplement: "Strength",
+                isolationCompoundAccessory: "Compound",
+                pushPullLegs: "Legs",
+                verticalHorizontalRotational: "Vertical",
+                stretch: false,
+                videoURL: "https://example.com/barbell-squat"
+            ),
+            sets: [
+                SetsDto(setNumber: 1, reps: 8, weight: 100.0),
+                SetsDto(setNumber: 2, reps: 8, weight: 105.0),
+                SetsDto(setNumber: 3, reps: 6, weight: 110.0)
+            ]
+        )
         routineViewModel.routines = [
-            RoutineDto(id: 1, name: "Strength Routine", description: "Build muscle strength", isFavorite: false, exerciseWithSetsDto: []),
-            RoutineDto(id: 2, name: "Weight Loss Routine", description: "Lose weight and tone up", isFavorite: false, exerciseWithSetsDto: []),
-            RoutineDto(id: 3, name: "Cardio Routine", description: "Improve cardiovascular health", isFavorite: false, exerciseWithSetsDto: [])
+            RoutineDto(id: 1, name: "Strength Routine", description: "Build muscle strength", isFavorite: false, exerciseWithSetsDto: [exercises]),
+            RoutineDto(id: 2, name: "Weight Loss Routine", description: "Lose weight and tone up", isFavorite: false, exerciseWithSetsDto: [exercises]),
+            RoutineDto(id: 3, name: "Cardio Routine", description: "Improve cardiovascular health", isFavorite: false, exerciseWithSetsDto: [exercises])
         ]
         return routineViewModel
     }

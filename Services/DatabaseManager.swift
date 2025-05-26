@@ -537,20 +537,17 @@ class DatabaseManager {
     
     func getExercisesWithSetsFromRoutine(routineId: Int) -> [ExerciseWithSetsDto] {
         let exercises = getExercisesFromRoutine(routineId: routineId)
-        return performDatabaseTask {
-            openDatabase()
-            log(.info, "Getting exercises and sets from routine: \(routineId)")
-            
-            var exercisesWithSets = [ExerciseWithSetsDto]()
-            
-            for exercise in exercises {
-                let sets = getSetsFromExercise(exerciseId: exercise.id)
-                exercisesWithSets.append(ExerciseWithSetsDto(exercise: exercise, sets: sets))
-            }
-            
-            log(.info, "Fetched \(exercisesWithSets.count) exercises with sets for routine ID: \(routineId)")
-            return exercisesWithSets
+        log(.info, "Getting exercises and sets from routine: \(routineId)")
+        
+        var exercisesWithSets = [ExerciseWithSetsDto]()
+        
+        for exercise in exercises {
+            let sets = getSetsFromExercise(exerciseId: exercise.id)
+            exercisesWithSets.append(ExerciseWithSetsDto(exercise: exercise, sets: sets))
         }
+        
+        log(.info, "Fetched \(exercisesWithSets.count) exercises with sets for routine ID: \(routineId)")
+        return exercisesWithSets
     }
     
     func getExerciseHistory(exerciseId: Int) -> [ExerciseHistoryDto] {
@@ -1053,45 +1050,42 @@ class DatabaseManager {
     }
 
     func getRoutineById(id: Int) -> RoutineDto? {
-        return performDatabaseTask {
-            openDatabase()
-            let query = "SELECT * FROM Routines WHERE routine_id = ?;"
-            var statement: OpaquePointer?
-            
-            guard sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK else {
-                let errorMessage = String(cString: sqlite3_errmsg(db))
-                log(.error, "Failed to prepare routine query: \(errorMessage)")
-                return RoutineDto(
-                    id: 0,
-                    name: "None",
-                    description: "None", isFavorite: false,
-                    exerciseWithSetsDto: nil
-                )
-            }
-            
-            defer { sqlite3_finalize(statement) }
-
-            // Bind values
-            sqlite3_bind_int(statement, 1, Int32(id))
-
-            if sqlite3_step(statement) == SQLITE_ROW {
-                let routineId = sqlite3_column_int(statement, 0)
-                let routineName = String(cString: sqlite3_column_text(statement, 1))
-                let routineDescription = sqlite3_column_text(statement, 2).flatMap { String(cString: $0) }
-
-                log(.info, "Routine retrieved successfully: \(routineName)")
-                return RoutineDto(
-                    id: Int(routineId),
-                    name: routineName,
-                    description: routineDescription, isFavorite: false,
-                    exerciseWithSetsDto: nil
-                )
-            } else {
-                log(.warning, "No routine found with id \(id)")
-            }
-
-            return nil
+        openDatabase()
+        let query = "SELECT * FROM Routines WHERE routine_id = ?;"
+        var statement: OpaquePointer?
+        
+        guard sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK else {
+            let errorMessage = String(cString: sqlite3_errmsg(db))
+            log(.error, "Failed to prepare routine query: \(errorMessage)")
+            return RoutineDto(
+                id: 0,
+                name: "None",
+                description: "None", isFavorite: false,
+                exerciseWithSetsDto: nil
+            )
         }
+        
+        defer { sqlite3_finalize(statement) }
+
+        // Bind values
+        sqlite3_bind_int(statement, 1, Int32(id))
+
+        if sqlite3_step(statement) == SQLITE_ROW {
+            let routineId = sqlite3_column_int(statement, 0)
+            let routineName = String(cString: sqlite3_column_text(statement, 1))
+            let routineDescription = sqlite3_column_text(statement, 2).flatMap { String(cString: $0) }
+
+            log(.info, "Routine retrieved successfully: \(routineName)")
+            return RoutineDto(
+                id: Int(routineId),
+                name: routineName,
+                description: routineDescription, isFavorite: false,
+                exerciseWithSetsDto: getExercisesWithSetsFromRoutine(routineId: id)
+            )
+        } else {
+            log(.warning, "No routine found with id \(id)")
+        }
+        return nil
     }
     
     func getRoutineByName(_ name: String) -> RoutineDto? {
